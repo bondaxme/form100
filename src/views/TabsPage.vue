@@ -10,32 +10,25 @@
           Назад
         </div>
         <ion-title style="height: 56px; font-size: 18px">Форма100 - {{ title }}</ion-title>
-        <img
-            src="../assets/medicred.png"
-            width="56"
-            height="56"
-            alt="logo"
-            class="logo"
-            @click="onGoTo('/tabs/tab3')"
-        />
+        <ion-icon aria-hidden="true" :icon="medicalOutline" class="logo" @click="onGoTo('/tabs/tab3')"/>
       </ion-toolbar>
     </ion-header>
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
         <ion-tab-button tab="tab1" @click="onGoTo('/tabs/tab1')">
-          <ion-icon aria-hidden="true" :icon="triangle" />
+          <ion-icon aria-hidden="true" :icon="listOutline" />
           <ion-label>Репорти</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="tab2" @click="onGoTo('/tabs/tab2')">
-          <ion-icon aria-hidden="true" :icon="ellipse" />
+          <ion-icon aria-hidden="true" :icon="createOutline" />
           <ion-label>Новий</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="tab3" @click="onGoTo('/tabs/tab3')">
-          <ion-icon aria-hidden="true" :icon="square" />
-          <ion-label>Завантажити дані</ion-label>
+          <ion-icon aria-hidden="true" :icon="settingsOutline" />
+          <ion-label>Налаштування</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -46,7 +39,7 @@
 import { defineComponent, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet, useIonRouter } from '@ionic/vue';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { createOutline, settingsOutline, listOutline, medicalOutline } from 'ionicons/icons';
 export default defineComponent({
   components: { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet },
   setup() {
@@ -77,9 +70,10 @@ export default defineComponent({
       onGoTo,
       goBack,
       title,
-      ellipse,
-      square,
-      triangle
+      createOutline,
+      settingsOutline,
+      listOutline,
+      medicalOutline
     };
   },
 });
@@ -101,5 +95,7 @@ export default defineComponent({
   right: 8px;
   padding: 10px;
   z-index: 1;
+  height: 36px;
+  width: 36px;
 }
 </style>
