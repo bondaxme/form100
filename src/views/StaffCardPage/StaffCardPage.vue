@@ -95,7 +95,6 @@ export default defineComponent({
             fetchFighterData(reportId);
         });
 
-
         return {
             staff,
             reports
@@ -104,27 +103,6 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
-.buttons {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 0 10px;
-}
-.button {
-    width: 18%;
-    margin: 0;
-}
-ion-item {
-    --padding-start: 0;
-}
-ion-note {
-    max-width: 200px;
-    text-align: right;
-}
-.staff-card {
-    margin: 26px 16px 16px;
-}
-.report-card {
-    margin: 10px 16px 24px;
-}
+<style lang="scss" scoped>
+@import "./StaffCardPage.scss";
 </style>

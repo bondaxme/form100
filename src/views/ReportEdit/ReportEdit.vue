@@ -8,11 +8,11 @@
 import Report from '@/components/Report/Report.vue';
 import {defineComponent, onMounted, ref} from 'vue';
 import { useRoute } from 'vue-router';
-import {getAllFromReports, getByIdFromReports} from '@/compasables/useDatabase.js';
+import {getByIdFromReports} from '@/compasables/useDatabase.js';
 
 export default defineComponent({
   components: { Report },
-  setup(context) {
+  setup() {
     const report = ref<any>(null);
     const fetchData = async (id: number) => {
       report.value = await getByIdFromReports(id);
@@ -29,6 +29,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-</style>

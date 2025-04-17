@@ -59,33 +59,6 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
-.search-bar {
-  margin-top: 18px;
-  padding: 8px 16px 0px;
-  --border-radius: 8px;
-}
-
-:deep .searchbar-input-container {
-  min-height: 50px !important;
-}
-
-:deep .searchbar-input {
-  padding-top: 7px !important;
-  padding-left: calc(50% - 90px) !important;
-}
-
-:deep .searchbar-has-focus,
-:deep .searchbar-has-value {
-  .searchbar-input {
-    padding-left: 42px !important;
-  }
-  .searchbar-search-icon {
-    left: 12px !important;
-  }
-}
-
-:deep .searchbar-clear-button {
-  right: 6px !important;
-}
+<style lang="scss" scoped>
+@import "./StaffPage.scss";
 </style>

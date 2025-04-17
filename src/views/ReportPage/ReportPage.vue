@@ -186,7 +186,6 @@ export default defineComponent({
 
       try {
         await navigator.clipboard.writeText(formattedText);
-        // alert('Дані скопійовано!');
         setOpenAlert(true);
       } catch (err) {
         console.error('Не вдалося скопіювати дані', err);
@@ -205,25 +204,6 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">
-.buttons-block {
-  display: flex;
-  width: 100%;
-  justify-content: center;
-  padding: 0 10px;
-  background-color: #fff;
-  bottom: -1px;
-  border-top: #dddddd 1px solid;
-}
-.item-label {
-  color: #666666;
-}
-.item-text {
-  color: black;
-  margin-bottom: 10px;
-  margin-top: 10px;
-}
-.items-list {
-  margin-bottom: 78.4px;
-}
+<style lang="scss" scoped>
+@import "./ReportPage.scss";
 </style>

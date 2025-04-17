@@ -80,22 +80,5 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.back {
-  position: absolute;
-  top: 10px;
-  left: 8px;
-  padding: 10px;
-  font-weight: bolder;
-  z-index: 1;
-  color: var(--ion-color-primary);
-}
-.logo {
-  position: absolute;
-  top: 0;
-  right: 8px;
-  padding: 10px;
-  z-index: 1;
-  height: 36px;
-  width: 36px;
-}
+@import "./TabsPage.scss";
 </style>
