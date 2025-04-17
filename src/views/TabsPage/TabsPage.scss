@@ -16,3 +16,13 @@
   height: 36px;
   width: 36px;
 }
+ion-tab-button {
+  --color: var(--ion-color-medium);
+  --color-selected: var(--ion-color-primary);
+
+  &.active {
+    ion-icon, ion-label {
+      color: var(--ion-color-primary);
+    }
+  }
+}
