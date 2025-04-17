@@ -7,7 +7,8 @@
             @toggleFilter="toggleFilter" :style="{ borderColor: 'var(--accent-color)' }" />
           <dashboard-widget title="200" :total="count200" :currentDay="countToday200" :isActive="activeFilter === '200'"
             @toggleFilter="toggleFilter" :style="{ borderColor: 'var(--danger-color)' }" />
-          <dashboard-widget title="4.5.0" />
+          <dashboard-widget title="Хвороба" :total="countIllness" :currentDay="countTodayIllness" :isActive="activeFilter === 'Хвороба'"
+            @toggleFilter="toggleFilter" :style="{ borderColor: 'var(--disease-color)' }" />
         </ion-list>
 
         <div class="search-container">
@@ -50,8 +51,10 @@ export default defineComponent({
     const reportList = ref<any>(null);
     const count300 = ref<number>(0);
     const count200 = ref<number>(0);
+    const countIllness = ref<number>(0);
     const countToday300 = ref<number>(0);
     const countToday200 = ref<number>(0);
+    const countTodayIllness = ref<number>(0);
     const activeFilter = ref<string | null>(null);
     const searchQuery = ref<any>('');
     // const searchedStaff = ref<any[]>([]);
@@ -61,8 +64,10 @@ export default defineComponent({
       reportList.value = await getAllFromReports();
       count300.value = await countHealthStatus('300');
       count200.value = await countHealthStatus('200');
+      countIllness.value = await countHealthStatus('Хвороба');
       countToday300.value = await countTodayReports('300');
       countToday200.value = await countTodayReports('200');
+      countTodayIllness.value = await countTodayReports('Хвороба');
     };
 
     // const onSearchInput = async () => {
@@ -125,8 +130,10 @@ export default defineComponent({
       reportList,
       count300,
       count200,
+      countIllness,
       countToday300,
       countToday200,
+      countTodayIllness,
       toggleFilter,
       activeFilter,
       filteredReports,

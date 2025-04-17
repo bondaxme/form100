@@ -45,35 +45,7 @@
   });
   </script>
   
-  <style scoped>
-  .ion-card {
-    margin: 0px;
-    width: 33%;
-    text-align: center;
-    border-bottom: 4px solid var(--disease-color)
-  }
-  .ion-card-header {
-    padding: 0.5rem;
-  }
-  .ion-card-content {
-    padding: 0 0.5rem 0.5rem 0.5rem;
-  }
-  .ion-card-title {
-    font-size: 1.25rem;
-    margin: 0;
-  }
-  .per-day {
-    font-size: 0.8rem;
-    margin: 0;
-  }
-  .total-records {
-    font-size: 1rem;
-    color: rgb(31, 31, 31);
-    display: block;
-  }
-  .active {
-    background-color: lightgray;
-    transform: scale(1.05);
-  }
+  <style lang="scss" scoped>
+  @import "@/components/DashboardWidget/DashboardWidget.scss";
   </style>
   

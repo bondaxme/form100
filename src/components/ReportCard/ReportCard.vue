@@ -55,8 +55,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.card {
-  margin-bottom: 16px;
-  cursor: pointer;
-}
+  @import "@/components/ReportCard/ReportCard.scss";
 </style>

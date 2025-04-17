@@ -65,13 +65,16 @@ export default defineComponent({
   padding: 8px 16px 0px;
   --border-radius: 8px;
 }
+
 :deep .searchbar-input-container {
   min-height: 50px !important;
 }
+
 :deep .searchbar-input {
   padding-top: 7px !important;
   padding-left: calc(50% - 90px) !important;
 }
+
 :deep .searchbar-has-focus,
 :deep .searchbar-has-value {
   .searchbar-input {
@@ -81,6 +84,7 @@ export default defineComponent({
     left: 12px !important;
   }
 }
+
 :deep .searchbar-clear-button {
   right: 6px !important;
 }

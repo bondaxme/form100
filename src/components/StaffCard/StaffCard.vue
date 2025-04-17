@@ -24,7 +24,7 @@ export default defineComponent({
       default: () => ({})
     }
   },
-  setup(props) {
+  setup() {
     const ionRouter = useIonRouter();
     const toStaffCard = (id) => {
       ionRouter.push(`/tabs/staff/${id}`);
@@ -39,11 +39,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="scss">
-.card {
-  margin-bottom: 16px;
-  cursor: pointer;
-}
-.unit-titles {
-  color: var(--ion-color-primary);
-}
+  @import "@/components/StaffCard/StaffCard.scss";
 </style>
