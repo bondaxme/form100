@@ -1,12 +1,16 @@
 import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { RouteRecordRaw } from 'vue-router';
-import TabsPage from '../views/TabsPage/TabsPage.vue'
-import HelloPage from '../views/HelloPage/HelloPage.vue'
+import TabsPage from '../views/TabsPage/TabsPage.vue';
+import { getPassword, checkSession } from '@/compasables/useDatabase';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/tabs/tab1'
+    redirect: '/login'
+  },
+  {
+    path: '/login',
+    component: () => import('@/views/LoginPage/LoginPage.vue'),
   },
   {
     path: '/tabs/',
@@ -45,16 +49,32 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/StaffCardPage/StaffCardPage.vue'),
       }
     ]
-  },
-  {
-    path: '/hello',
-    component: HelloPage,
   }
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
-})
+});
 
-export default router
+// Navigation guard
+router.beforeEach(async (to, from, next) => {
+  if (to.path === '/login') {
+    // Allow access to login page
+    next();
+    return;
+  }
+
+  // Check if password exists and session is valid
+  const hashedPassword = await getPassword();
+  const sessionValid = await checkSession();
+
+  if (!hashedPassword || !sessionValid) {
+    next('/login');
+    return;
+  }
+
+  next();
+});
+
+export default router;

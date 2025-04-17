@@ -5,11 +5,77 @@ import { toRaw } from 'vue';
 const db = new Dexie('MyDatabase2');
 
 // Визначення схеми
-db.version(2).stores({
+db.version(3).stores({
     reportsTable: '++id, name, nickname, birthday, unit, rank, phone, location, situation, witnesses, diagnosis, help, tq, state, additional, lost, timePass, evacuatedBy, healthStatus, createdAt',
-    staffTable: '++id, rank, name, nickname, phone, birthday, workPosition, unit, unit2, unit3, unit4, unit5'
-    // staffTable: '++id, Звання, ПІБ, Позивний, телефон, дата народження, Посада, Відділення, Взвод, Рота, Батальйон, Бригада'
+    staffTable: '++id, rank, name, nickname, phone, birthday, workPosition, unit, unit2, unit3, unit4, unit5',
+    settingsTable: 'key, value'
 });
+
+// Password and session management
+export const savePassword = async (hashedPassword) => {
+    try {
+        await db.settingsTable.put({ key: 'password', value: hashedPassword });
+    } catch (error) {
+        console.error('Failed to save password:', error);
+        throw error;
+    }
+};
+
+export const getPassword = async () => {
+    try {
+        const record = await db.settingsTable.get('password');
+        return record?.value;
+    } catch (error) {
+        console.error('Failed to get password:', error);
+        return null;
+    }
+};
+
+export const createSession = async () => {
+    try {
+        const session = {
+            id: crypto.randomUUID(),
+            timestamp: Date.now()
+        };
+        await db.settingsTable.put({ key: 'session', value: session });
+        return session;
+    } catch (error) {
+        console.error('Failed to create session:', error);
+        throw error;
+    }
+};
+
+export const checkSession = async () => {
+    try {
+        const record = await db.settingsTable.get('session');
+        if (!record?.value) return false;
+        
+        const session = record.value;
+        const now = Date.now();
+        // Session expires after 1 minute of inactivity
+        const isValid = (now - session.timestamp) < 60000;
+        
+        if (!isValid) {
+            await db.settingsTable.delete('session');
+            return false;
+        }
+        
+        // Update session timestamp
+        await createSession();
+        return true;
+    } catch (error) {
+        console.error('Failed to check session:', error);
+        return false;
+    }
+};
+
+export const clearSession = async () => {
+    try {
+        await db.settingsTable.delete('session');
+    } catch (error) {
+        console.error('Failed to clear session:', error);
+    }
+};
 
 // Reports Table
 export const postToReports = async (data) => {
