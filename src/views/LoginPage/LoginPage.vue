@@ -59,10 +59,13 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useIonRouter } from '@ionic/vue';
+import { IonToast, useIonRouter } from '@ionic/vue';
 import { savePassword, getPassword, createSession } from '@/compasables/useDatabase';
 
 export default defineComponent({
+  components: {
+    IonToast
+  },
   setup() {
     const password = ref('');
     const confirmPassword = ref('');
@@ -172,37 +175,6 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
-.login-container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  max-width: 400px;
-  margin: 0 auto;
-}
-
-.logo {
-  width: 120px;
-  height: 120px;
-  margin-bottom: 20px;
-}
-
-ion-item {
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-.password-toggle {
-  cursor: pointer;
-  font-size: 1.2rem;
-  margin-right: 8px;
-}
-
-ion-button {
-  margin-top: 20px;
-  width: 100%;
-}
+<style lang="scss" scoped>
+  @import "./LoginPage.scss";
 </style>

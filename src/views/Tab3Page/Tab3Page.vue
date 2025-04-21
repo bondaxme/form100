@@ -11,6 +11,7 @@
       :message="toastMessage"
       :duration="2000"
       position="top"
+      position-anchor="header"
       :color="toastColor"
       @didDismiss="showToast = false"
     ></ion-toast>

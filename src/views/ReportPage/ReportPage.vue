@@ -96,24 +96,44 @@
       <div class="buttons-block" slot="fixed">
         <ion-grid>
           <ion-row>
-            <ion-col>
+            <ion-col size="3">
               <ion-button
                   color="light"
                   shape="round"
                   style="width: 100%"
                   @click="toReportEdit(report.id)"
               >
-                Редагувати
+                <ion-icon :icon="pencil"></ion-icon>
               </ion-button>
             </ion-col>
-            <ion-col>
+            <ion-col size="3">
               <ion-button
                   color="primary"
                   shape="round"
                   style="width: 100%"
-                  @click="copy(report)"
+                  @click="copyReport(report)"
               >
-                Копіювати
+                <ion-icon :icon="copy"></ion-icon>
+              </ion-button>
+            </ion-col>
+            <ion-col size="3">
+              <ion-button
+                  color="danger"
+                  shape="round"
+                  style="width: 100%"
+                  @click="deleteReport(report.id)"
+              >
+                <ion-icon :icon="trash"></ion-icon>
+              </ion-button>
+            </ion-col>
+            <ion-col size="3">
+              <ion-button
+                  color="success"
+                  shape="round"
+                  style="width: 100%"
+                  @click="sendReport"
+              >
+                <ion-icon :icon="send"></ion-icon>
               </ion-button>
             </ion-col>
           </ion-row>
@@ -125,23 +145,50 @@
         position="top"
         color="primary"
         position-anchor="header"
-        message="Дані скопійовано"
+        :message="toastMessage"
         :duration="2000"
         @didDismiss="setOpenAlert(false)"
     ></ion-toast>
+    <ion-alert
+        :is-open="isAlertOpen"
+        header="Підтвердження видалення"
+        message="Ви впевнені, що хочете видалити цей звіт?"
+        :buttons="[
+          {
+            text: 'Скасувати',
+            role: 'cancel',
+            cssClass: 'secondary',
+          },
+          {
+            text: 'Видалити',
+            role: 'confirm',
+            cssClass: 'danger',
+          },
+        ]"
+        @didDismiss="handleAlertDismiss"
+    ></ion-alert>
   </ion-page>
 </template>
 
 <script lang="ts">
 import {defineComponent, onMounted, ref} from 'vue';
 import { useRoute } from 'vue-router';
-import {getByIdFromReports} from '@/compasables/useDatabase.js';
-import {useIonRouter, IonToast} from "@ionic/vue";
+import {getByIdFromReports, deleteFromReports} from '@/compasables/useDatabase.js';
+import {useIonRouter, IonToast, IonAlert} from "@ionic/vue";
+import { pencil, copy, trash, send } from 'ionicons/icons';
 
 export default defineComponent({
-  components: { IonToast },
+  components: { 
+    IonToast,
+    IonAlert 
+  },
   setup() {
     const report = ref<any>(null);
+    const isOpenAlert = ref(false);
+    const isAlertOpen = ref(false);
+    const toastMessage = ref('');
+    const reportToDelete = ref<number | null>(null);
+    
     const fetchData = async (id: number) => {
       report.value = await getByIdFromReports(id);
     };
@@ -157,7 +204,6 @@ export default defineComponent({
       ionRouter.push(`/tabs/report/${id}/edit`);
     };
 
-    const isOpenAlert = ref(false);
     const setOpenAlert = (state: boolean) => {
       isOpenAlert.value = state;
     };
@@ -166,7 +212,7 @@ export default defineComponent({
       return value || '';
     };
 
-    const copy = async (reportData: any) => {
+    const copyReport = async (reportData: any) => {
       const formattedText = `
 1. Стан - ${formatValue(reportData.healthStatus)}
 2. Дата та час події - ${formatValue(reportData.date)}
@@ -190,18 +236,53 @@ export default defineComponent({
 
       try {
         await navigator.clipboard.writeText(formattedText);
+        toastMessage.value = 'Дані скопійовано';
         setOpenAlert(true);
       } catch (err) {
-        alert('Помилка при копіюванні даних');
+        toastMessage.value = 'Помилка при копіюванні даних';
+        setOpenAlert(true);
       }
+    };
+
+    const deleteReport = async (id: number) => {
+      reportToDelete.value = id;
+      isAlertOpen.value = true;
+    };
+
+    const handleAlertDismiss = async (ev: CustomEvent) => {
+      if (ev.detail.role === 'confirm' && reportToDelete.value) {
+        try {
+          await deleteFromReports(reportToDelete.value);
+          window.location.href = '/tabs/tab1';
+        } catch (err) {
+          toastMessage.value = 'Помилка при видаленні звіту';
+          setOpenAlert(true);
+        }
+      } 
+      reportToDelete.value = null;
+      isAlertOpen.value = false;
+    };
+
+    const sendReport = () => {
+      toastMessage.value = 'Функція відправки буде доступна незабаром';
+      setOpenAlert(true);
     };
 
     return {
       report,
       isOpenAlert,
-      copy,
+      isAlertOpen,
+      toastMessage,
+      copyReport,
       toReportEdit,
-      setOpenAlert
+      deleteReport,
+      sendReport,
+      setOpenAlert,
+      handleAlertDismiss,
+      pencil,
+      copy,
+      trash,
+      send
     };
   },
 });
