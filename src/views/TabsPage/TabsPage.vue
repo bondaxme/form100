@@ -9,7 +9,7 @@
         >
           Назад
         </div>
-        <ion-title style="height: 56px; font-size: 18px">Форма100 - {{ title }}</ion-title>
+        <ion-title style="height: 56px; font-size: 18px">{{ title }}</ion-title>
         <ion-icon aria-hidden="true" :icon="medicalOutline" class="logo" @click="onGoTo('/tabs/tab3')"/>
       </ion-toolbar>
     </ion-header>

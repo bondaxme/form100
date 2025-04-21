@@ -133,14 +133,13 @@
 </template>
 
 <script lang="ts">
-import Report from '@/components/Report/Report.vue';
 import {defineComponent, onMounted, ref} from 'vue';
 import { useRoute } from 'vue-router';
 import {getByIdFromReports} from '@/compasables/useDatabase.js';
 import {useIonRouter, IonToast} from "@ionic/vue";
 
 export default defineComponent({
-  components: { Report, IonToast },
+  components: { IonToast },
   setup() {
     const report = ref<any>(null);
     const fetchData = async (id: number) => {
@@ -193,7 +192,6 @@ export default defineComponent({
         await navigator.clipboard.writeText(formattedText);
         setOpenAlert(true);
       } catch (err) {
-        console.error('Не вдалося скопіювати дані', err);
         alert('Помилка при копіюванні даних');
       }
     };
