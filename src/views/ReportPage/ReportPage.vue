@@ -123,6 +123,7 @@
     <ion-toast
         :is-open="isOpenAlert"
         position="top"
+        color="primary"
         position-anchor="header"
         message="Дані скопійовано"
         :duration="2000"
@@ -140,7 +141,7 @@ import {useIonRouter, IonToast} from "@ionic/vue";
 
 export default defineComponent({
   components: { Report, IonToast },
-  setup(context) {
+  setup() {
     const report = ref<any>(null);
     const fetchData = async (id: number) => {
       report.value = await getByIdFromReports(id);
