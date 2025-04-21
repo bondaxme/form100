@@ -22,33 +22,53 @@ import { ref } from 'vue';
 import { cloudUploadOutline, downloadOutline } from 'ionicons/icons';
 import { postToStaffTable, getAllFromStaffTable } from '@/compasables/useDatabase.js';
 
+interface StaffData {
+  rank?: string;
+  name?: string;
+  nickname?: string;
+  phone?: string;
+  birthday?: string;
+  workPosition?: string;
+  unit?: string;
+  unit2?: string;
+  unit3?: string;
+  unit4?: string;
+  unit5?: string;
+  [key: string]: string | undefined;
+}
+
 export default {
   emits: ['show-toast'],
   setup(props, { emit }) {
     const selectedFileName = ref('');
 
-    const handleFileUpload = (event) => {
-      const file = event.target.files[0];
+    const handleFileUpload = (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      if (!target || !target.files) return;
+      
+      const file = target.files[0];
       if (!file) return;
       
       selectedFileName.value = file.name;
 
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        const text = e.target.result;
+      reader.onload = async (e: ProgressEvent<FileReader>) => {
+        if (!e.target?.result) return;
+        const text = e.target.result as string;
         const data = parseCSV(text);
         try {
           await saveDataToIndexedDB(data);
           emit('show-toast', 'Файл успішно завантажено!', false);
         } catch (error) {
-          emit('show-toast', 'Помилка завантаження файлу: ' + error.message, true);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          emit('show-toast', 'Помилка завантаження файлу: ' + errorMessage, true);
           console.error(error);
         }
       };
 
-      reader.onerror = async (error) => {
-        emit('show-toast', 'Помилка читання файлу: ' + error.message, true);
-        console.error(error);
+      reader.onerror = () => {
+        emit('show-toast', 'Помилка читання файлу', true);
+        console.error(reader.error);
       };
 
       reader.readAsText(file);
@@ -60,7 +80,7 @@ export default {
         const headers = ['Звання', 'ПІБ', 'Позивний', 'Телефон', 'Дата народження', 'Посада', 
                       'Відділення', 'Взвод', 'Рота', 'Батальйон', 'Бригада'];
         
-        const csvData = staffList.map((staff: any) => {
+        const csvData = staffList.map((staff: StaffData) => {
           return [
             staff.rank || '',
             staff.name || '',
@@ -94,11 +114,11 @@ export default {
       }
     };
 
-    const parseCSV = (text) => {
+    const parseCSV = (text: string): StaffData[] => {
       const lines = text.split('\n');
       const headers = lines[0].split(',');
 
-      const fieldMap = {
+      const fieldMap: Record<string, string> = {
         'Звання': 'rank',
         'ПІБ': 'name',
         'Позивний': 'nickname',
@@ -114,18 +134,18 @@ export default {
 
       const data = lines.slice(1).map(line => {
         const values = line.split(',');
-        let obj = {};
-        headers.forEach((header, index) => {
+        const obj: StaffData = {};
+        headers.forEach((header: string, index: number) => {
           const key = fieldMap[header.trim()] || header.trim();
-          obj[key] = values[index].trim();
+          obj[key] = values[index]?.trim();
         });
         return obj;
       });
       return data;
     };
 
-    const saveDataToIndexedDB = async (data) => {
-      for (let item of data) {
+    const saveDataToIndexedDB = async (data: StaffData[]) => {
+      for (const item of data) {
         await postToStaffTable(item);
       }
     };
