@@ -21,11 +21,13 @@
 import { ref } from 'vue';
 import FileUploader from '@/components/FileUploader/FileUploader.vue';
 import ViewDataButton from '@/components/ViewDataButton/ViewDataButton.vue';
+import { IonToast } from "@ionic/vue";
 
 export default {
   components: {
     FileUploader,
-    ViewDataButton
+    ViewDataButton,
+    IonToast
   },
   setup() {
     const showToast = ref(false);

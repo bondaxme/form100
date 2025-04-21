@@ -58,7 +58,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/vue';
 import { savePassword, getPassword, createSession } from '@/compasables/useDatabase';
@@ -76,7 +75,6 @@ export default defineComponent({
     const ionRouter = useIonRouter();
 
     onMounted(async () => {
-      // Check if password exists
       const hashedPassword = await getPassword();
       isFirstTime.value = !hashedPassword;
     });
@@ -95,33 +93,53 @@ export default defineComponent({
       showConfirmPassword.value = !showConfirmPassword.value;
     };
 
+    const validatePassword = (pwd: string): { isValid: boolean; message: string } => {
+      if (pwd.length < 8) {
+        return { isValid: false, message: 'Пароль повинен містити мінімум 8 символів' };
+      }
+      if (!/[A-Z]/.test(pwd)) {
+        return { isValid: false, message: 'Пароль повинен містити хоча б одну велику літеру' };
+      }
+      if (!/[0-9]/.test(pwd)) {
+        return { isValid: false, message: 'Пароль повинен містити хоча б одну цифру' };
+      }
+      if (!/[!@#$%^&*(),.?":{}|<>]/.test(pwd)) {
+        return { isValid: false, message: 'Пароль повинен містити хоча б один спеціальний символ' };
+      }
+      return { isValid: true, message: '' };
+    };
+
     const handleSubmit = async () => {
+      const validation = validatePassword(password.value);
+      if (!validation.isValid) {
+        showError(validation.message);
+        return;
+      }
+
       if (isFirstTime.value) {
-        if (password.value.length < 4) {
-          showError('Пароль повинен містити мінімум 4 символи');
-          return;
-        }
         if (password.value !== confirmPassword.value) {
           showError('Паролі не співпадають');
           return;
         }
         
-        // Hash password and save
         const hashedPassword = await hashPassword(password.value);
         await savePassword(hashedPassword);
-        await createSession(); // Create new session
+        await createSession();
         
         ionRouter.push('/tabs/tab1');
       } else {
-        // Verify password
-        const hashedPassword = await getPassword();
-        const inputHashedPassword = await hashPassword(password.value);
-        
-        if (hashedPassword === inputHashedPassword) {
-          await createSession(); // Create new session
-          ionRouter.push('/tabs/tab1');
-        } else {
-          showError('Невірний пароль');
+        try {
+          const hashedPassword = await getPassword();
+          const inputHashedPassword = await hashPassword(password.value);
+          
+          if (hashedPassword === inputHashedPassword) {
+            await createSession();
+            ionRouter.push('/tabs/tab1');
+          } else {
+            showError('Невірний пароль');
+          }
+        } catch (error) {
+          showError('Помилка при вході. Спробуйте ще раз');
         }
       }
     };
