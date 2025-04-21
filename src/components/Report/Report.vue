@@ -270,8 +270,15 @@ export default defineComponent({
       form.value.name = data.name;
       form.value.nickname = data.nickname;
       form.value.phone = data.phone;
-      form.value.unit = data.unit + ', ' + data.unit2 + ', ' + data.unit3 + ', ' + data.unit4 + ', ' + data.unit5;
-      form.value.rank = data.rank + ', ' + data.workPosition;
+      
+      const unitArray = [data.unit, data.unit2, data.unit3, data.unit4, data.unit5]
+        .filter(item => item && item.trim());
+      form.value.unit = unitArray.join(', ');
+
+      const rankArray = [data.rank, data.workPosition]
+        .filter(item => item && item.trim());
+      form.value.rank = rankArray.join(', ');
+
       form.value.birthday = data.birthday;
     };
     // const isDebounce = ref(false);

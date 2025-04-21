@@ -123,6 +123,7 @@
     <ion-toast
         :is-open="isOpenAlert"
         position="top"
+        color="primary"
         position-anchor="header"
         message="Дані скопійовано"
         :duration="2000"
@@ -140,7 +141,7 @@ import {useIonRouter, IonToast} from "@ionic/vue";
 
 export default defineComponent({
   components: { Report, IonToast },
-  setup(context) {
+  setup() {
     const report = ref<any>(null);
     const fetchData = async (id: number) => {
       report.value = await getByIdFromReports(id);
@@ -162,26 +163,30 @@ export default defineComponent({
       isOpenAlert.value = state;
     };
 
+    const formatValue = (value: any): string => {
+      return value || '';
+    };
+
     const copy = async (reportData: any) => {
       const formattedText = `
-1. Стан - ${reportData.healthStatus}
-2. Дата та час події - ${reportData.date}
-3. Позивний (ПІБ) - ${reportData.nickname}
-4. ПІБ - ${reportData.name}
-5. Підрозділ - ${reportData.unit}
-6. Звання, посада - ${reportData.rank}
-7. Телефон - ${reportData.phone}
-8. Місце події - ${reportData.location}
-9. Обставини - ${reportData.situation}
-10. Свідки - ${reportData.witnesses}
-11. Попередній діагноз - ${reportData.diagnosis}
-12. Надана допомога - ${reportData.help}
-13. TQ - ${reportData.tq}
-14. Стан в динаміці - ${reportData.state}
-15. В засобах індивідуального захисту - ${reportData.additional}
-16. Втрачене майно - ${reportData.lost}
-17. Час передачі на - ${reportData.timePass}
-18. Ким евакуйований - ${reportData.evacuatedBy}
+1. Стан - ${formatValue(reportData.healthStatus)}
+2. Дата та час події - ${formatValue(reportData.date)}
+3. Позивний (ПІБ) - ${formatValue(reportData.nickname)}
+4. ПІБ - ${formatValue(reportData.name)}
+5. Підрозділ - ${formatValue(reportData.unit)}
+6. Звання, посада - ${formatValue(reportData.rank)}
+7. Телефон - ${formatValue(reportData.phone)}
+8. Місце події - ${formatValue(reportData.location)}
+9. Обставини - ${formatValue(reportData.situation)}
+10. Свідки - ${formatValue(reportData.witnesses)}
+11. Попередній діагноз - ${formatValue(reportData.diagnosis)}
+12. Надана допомога - ${formatValue(reportData.help)}
+13. TQ - ${formatValue(reportData.tq)}
+14. Стан в динаміці - ${formatValue(reportData.state)}
+15. В засобах індивідуального захисту - ${formatValue(reportData.additional)}
+16. Втрачене майно - ${formatValue(reportData.lost)}
+17. Час передачі на - ${formatValue(reportData.timePass)}
+18. Ким евакуйований - ${formatValue(reportData.evacuatedBy)}
       `.trim();
 
       try {
