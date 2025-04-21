@@ -5,7 +5,7 @@ import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/reportMobileApp/',
+  // base: '/reportMobileApp/',
   plugins: [
     vue(),
     legacy()
