@@ -80,7 +80,7 @@ export default {
         const headers = ['Звання', 'ПІБ', 'Позивний', 'Телефон', 'Дата народження', 'Посада', 
                       'Відділення', 'Взвод', 'Рота', 'Батальйон', 'Бригада'];
         
-        const csvData = staffList.map((staff: StaffData) => {
+        const csvData = staffList.map((staff: any) => {
           return [
             staff.rank || '',
             staff.name || '',

@@ -7,6 +7,7 @@ export const countHealthStatus = async (status: string) => {
         return count;
     } catch (error) {
         console.error(`Failed to count healthStatus ${status}:`, error);
+        return 0;
     }
 };
 
@@ -26,5 +27,6 @@ export const countTodayReports = async (status: string) => {
         return count;
     } catch (error) {
         console.error(`Failed to count reports created today with healthStatus ${status}:`, error);
+        return 0;
     }
 };

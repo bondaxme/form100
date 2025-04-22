@@ -56,6 +56,7 @@ export const getReportsByNameAndNickname = async (name: string, nickname: string
         return reports;
     } catch (error) {
         console.error('Failed to retrieve reports for name and nickname:', error);
+        return [];
     }
 };
 

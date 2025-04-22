@@ -40,6 +40,7 @@ export const getAllFromStaffTable = async () => {
         return allData;
     } catch (error) {
         console.error('Failed to retrieve data from staffTable:', error);
+        return [];
     }
 };
 
