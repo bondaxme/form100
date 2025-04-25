@@ -1,11 +1,11 @@
 <template>
   <div class="file-actions-container">
     <div class="button-group">
-      <label class="custom-file-upload">
-        <input type="file" @change="handleFileUpload" accept=".csv">
+      <input type="file" ref="fileInput" @change="handleFileUpload" accept=".csv" style="display: none;">
+      <ion-button class="import-button" @click="triggerFileInput">
         <ion-icon :icon="cloudUploadOutline" />
         Імпорт CSV
-      </label>
+      </ion-button>
       <ion-button class="export-button" @click="exportToCSV">
         <ion-icon :icon="downloadOutline" />
         Експорт CSV
@@ -41,6 +41,13 @@ export default {
   emits: ['show-toast'],
   setup(props, { emit }) {
     const selectedFileName = ref('');
+    const fileInput = ref<HTMLInputElement | null>(null);
+
+    const triggerFileInput = () => {
+      if (fileInput.value) {
+        fileInput.value.click();
+      }
+    };
 
     const handleFileUpload = (event: Event) => {
       const target = event.target as HTMLInputElement;
@@ -156,7 +163,9 @@ export default {
       exportToCSV,
       selectedFileName,
       cloudUploadOutline,
-      downloadOutline
+      downloadOutline,
+      fileInput,
+      triggerFileInput
     };
   }
 };

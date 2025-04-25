@@ -1,7 +1,7 @@
 <template>
   <ion-page style="margin-top: 56px">
     <ion-content :fullscreen="true">
-      <ion-item style="margin-top: 50px" lines="none">
+      <ion-item style="margin-top: 24px" lines="none">
         <FileUploader @show-toast="showToastMessage" />
       </ion-item>
       <ViewDataButton />
