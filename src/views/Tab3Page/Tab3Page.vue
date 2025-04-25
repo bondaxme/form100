@@ -4,6 +4,9 @@
       <ion-item style="margin-top: 24px" lines="none">
         <FileUploader @show-toast="showToastMessage" />
       </ion-item>
+      <ion-item lines="none">
+        <ClearDataButton @show-toast="showToastMessage" />
+      </ion-item>
       <ViewDataButton />
     </ion-content>
     <ion-toast
@@ -22,12 +25,14 @@
 import { ref } from 'vue';
 import FileUploader from '@/components/FileUploader/FileUploader.vue';
 import ViewDataButton from '@/components/ViewDataButton/ViewDataButton.vue';
+import ClearDataButton from '@/components/ClearDataButton/ClearDataButton.vue';
 import { IonToast } from "@ionic/vue";
 
 export default {
   components: {
     FileUploader,
     ViewDataButton,
+    ClearDataButton,
     IonToast
   },
   setup() {
