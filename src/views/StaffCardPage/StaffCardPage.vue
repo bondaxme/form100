@@ -12,9 +12,9 @@
                                 <ion-label>ПІБ</ion-label>
                                 <ion-note slot="end">{{ staff.name }}</ion-note>
                             </ion-item>
-                            <ion-item v-if="staff.birthdate">
+                            <ion-item v-if="staff.birthday">
                                 <ion-label>Дата народження</ion-label>
-                                <ion-note slot="end">{{ staff.birthdate }}</ion-note>
+                                <ion-note slot="end">{{ staff.birthday }}</ion-note>
                             </ion-item>
                             <ion-item v-if="staff.unit">
                                 <ion-label>Відділення</ion-label>

@@ -38,7 +38,7 @@
           mode="md"
       />
       <ion-input
-          v-model="form.birthdate"
+          v-model="form.birthday"
           class="ion-margin-bottom"
           label="Дата народження"
           label-placement="floating"
@@ -150,7 +150,7 @@ export default defineComponent({
     const form = ref({
       nickname: '',
       name: '',
-      birthdate: '',
+      birthday: '',
       rank: '',
       workPosition: '',
       phone: '',

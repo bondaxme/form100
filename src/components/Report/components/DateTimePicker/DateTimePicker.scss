@@ -1,0 +1,39 @@
+.date-picker-modal {
+  --height: 60%;
+  
+  ion-datetime {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    --background: transparent;
+  }
+
+  ion-content {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+// /* Стилі для інпуту з датапікером */
+// ion-input.ion-margin-bottom {
+//   &[readonly] {
+//     --highlight-color: transparent;
+//     &::part(native) {
+//       &:focus-within {
+//         outline: none;
+//         box-shadow: none;
+//       }
+//     }
+//   }
+// }
+
+.clear-icon {
+  cursor: pointer;
+  margin-right: 8px;
+  color: var(--ion-color-medium);
+  font-size: 18px;
+  
+  &:hover {
+    color: var(--ion-color-medium-shade);
+  }
+}

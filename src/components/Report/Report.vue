@@ -57,13 +57,19 @@
         mode="md"
     />
     <ion-input
-        v-model="form.birthdate"
+        v-model="form.birthday"
         class="ion-margin-bottom"
         label="Дата народження"
         label-placement="floating"
         fill="outline"
         mode="md"
+        maxlength="10"
+        placeholder="ДД.ММ.РРРР"
+        @ionInput="formatBirthdate"
     />
+    <div v-if="birthdateError" class="error-message">
+      {{ birthdateError }}
+    </div>
     <ion-textarea
         v-model="form.unit"
         class="ion-margin-bottom"
@@ -90,13 +96,9 @@
         fill="outline"
         mode="md"
     />
-    <ion-input
+    <date-time-picker
         v-model="form.date"
-        class="ion-margin-bottom"
         label="Дата та час події"
-        label-placement="floating"
-        fill="outline"
-        mode="md"
     />
     <ion-input
         v-model="form.location"
@@ -210,10 +212,13 @@
 
 <script lang="js">
 import { defineComponent, ref, watch } from 'vue';
-import { IonSegment, IonSegmentButton } from '@ionic/vue';
+import { IonSegment, IonSegmentButton, IonButton } from '@ionic/vue';
 import { useRouter } from 'vue-router';
 import { postToReports, updateByIdInReports, searchInStaffTable } from '@/compasables/useDatabase.js';
 import NewStaffModal from "@/components/newStaff/newStaffModal.vue";
+import { formatBirthdateInput, validateBirthdate } from './composables/useDateValidation.ts';
+import DateTimePicker from './components/DateTimePicker/DateTimePicker.vue';
+
 export default defineComponent({
   props: {
     report: {
@@ -228,11 +233,14 @@ export default defineComponent({
   components: {
     NewStaffModal,
     IonSegment,
-    IonSegmentButton
+    IonSegmentButton,
+    IonButton,
+    DateTimePicker
   },
   setup(props) {
     const router = useRouter();
     const isFocused = ref(false);
+    const birthdateError = ref('');
     const form = ref({
       date: '',
       name: '',
@@ -318,8 +326,43 @@ export default defineComponent({
       searchedStaffByNickame.value = [];
     };
 
+    const formatBirthdate = (event) => {
+      const formatted = formatBirthdateInput(event.target.value);
+      
+      event.target.value = formatted;
+      form.value.birthday = formatted;
+      
+      if (!formatted) {
+        birthdateError.value = '';
+        return;
+      }
+
+      if (formatted.length === 10) {
+        const birthdateValidation = validateBirthdate(formatted);
+        if (birthdateValidation !== true && !birthdateValidation.valid) {
+          birthdateError.value = birthdateValidation.message;
+        } else {
+          birthdateError.value = '';
+        }
+      } else if (formatted.length > 0) {
+        birthdateError.value = '';
+      }
+    };
+
     const saveReport = async () => {
       try {
+        birthdateError.value = '';
+        
+        const birthdateValidation = validateBirthdate(form.value.birthday);
+        
+        if (birthdateValidation !== true && !birthdateValidation.valid) {
+          birthdateError.value = birthdateValidation.message;
+          setTimeout(() => {
+            document.querySelector('.error-message')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 100);
+          return;
+        }
+        
         if (props.type === 'edit') {
           await updateByIdInReports(form.value.id, form.value);
           // alert('Репорт успішно збережено');
@@ -349,6 +392,9 @@ export default defineComponent({
       isFocused,
       onFocus,
       onBlur,
+      formatBirthdate,
+      validateBirthdate,
+      birthdateError,
     };
   },
 });

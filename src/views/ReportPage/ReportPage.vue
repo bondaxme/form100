@@ -18,6 +18,11 @@
         </ion-item>
 
         <ion-item>
+          <ion-label position="stacked" class="item-label">4. Дата народження</ion-label>
+          <ion-text class="item-text">{{ report.birthday }}</ion-text>
+        </ion-item>
+
+        <ion-item>
           <ion-label position="stacked" class="item-label">4. ПІБ</ion-label>
           <ion-text class="item-text">{{ report.name }}</ion-text>
         </ion-item>

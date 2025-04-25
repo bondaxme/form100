@@ -119,24 +119,25 @@ export default {
       const headers = lines[0].split(',');
 
       const fieldMap: Record<string, string> = {
-        'Звання': 'rank',
-        'ПІБ': 'name',
-        'Позивний': 'nickname',
-        'Телефон': 'phone',
-        'Дата народження': 'birthday',
-        'Посада': 'workPosition',
-        'Відділення': 'unit1',
-        'Взвод': 'unit2',
-        'Рота': 'unit3',
-        'Батальйон': 'unit4',
-        'Бригада': 'unit5'
+        'звання': 'rank',
+        'піб': 'name',
+        'позивний': 'nickname',
+        'телефон': 'phone',
+        'дата народження': 'birthday',
+        'посада': 'workPosition',
+        'відділення': 'unit1',
+        'взвод': 'unit2',
+        'рота': 'unit3',
+        'батальйон': 'unit4',
+        'бригада': 'unit5'
       };
 
       const data = lines.slice(1).map(line => {
         const values = line.split(',');
         const obj: StaffData = {};
         headers.forEach((header: string, index: number) => {
-          const key = fieldMap[header.trim()] || header.trim();
+          const normalizedHeader = header.trim().toLowerCase();
+          const key = fieldMap[normalizedHeader] || normalizedHeader;
           obj[key] = values[index]?.trim();
         });
         return obj;
