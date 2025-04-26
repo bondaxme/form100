@@ -21,6 +21,8 @@
 import { ref } from 'vue';
 import { cloudUploadOutline, downloadOutline } from 'ionicons/icons';
 import { postToStaffTable, getAllFromStaffTable } from '@/compasables/useDatabase.js';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { isPlatform } from '@ionic/vue';
 
 interface StaffData {
   rank?: string;
@@ -104,17 +106,35 @@ export default {
         });
 
         const csvContent = [headers.join(','), ...csvData].join('\n');
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
+        const fileName = `staff_export_${new Date().toISOString().split('T')[0]}.csv`;
         
-        link.setAttribute('href', url);
-        link.setAttribute('download', `staff_export_${new Date().toISOString().split('T')[0]}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        emit('show-toast', 'Файл успішно експортовано', false);
+        if (isPlatform('mobile')) {
+          try {
+            await Filesystem.writeFile({
+              path: fileName,
+              data: csvContent,
+              directory: Directory.Documents,
+              encoding: Encoding.UTF8
+            });
+            
+            emit('show-toast', 'Файл збережено у Documents', false);
+          } catch (err) {
+            console.error('Filesystem error:', err);
+            emit('show-toast', 'Помилка збереження файлу', true);
+          }
+        } else {
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const link = document.createElement('a');
+          const url = URL.createObjectURL(blob);
+          
+          link.setAttribute('href', url);
+          link.setAttribute('download', fileName);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          emit('show-toast', 'Файл успішно експортовано', false);
+        }
       } catch (error) {
         console.error('Export error:', error);
         emit('show-toast', 'Помилка при експорті файлу', true);

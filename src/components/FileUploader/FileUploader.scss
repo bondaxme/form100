@@ -25,7 +25,12 @@
 }
 
 .file-name {
-  margin-top: 10px;
+  position: absolute;
+  margin-top: 5px;
   font-size: 14px;
   word-break: break-all;
+  z-index: 9999;
+  width: 100%;
+  text-align: center;
+  left: 0;
 }
