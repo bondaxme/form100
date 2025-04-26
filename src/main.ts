@@ -26,7 +26,8 @@ import {
   IonSelectOption,
   IonGrid,
   IonCol,
-  IonRow
+  IonRow,
+  IonToast
 } from '@ionic/vue';
 
 const components = {
@@ -53,7 +54,8 @@ const components = {
   IonSelectOption,
   IonGrid,
   IonCol,
-  IonRow
+  IonRow,
+  IonToast
 };
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/vue/css/core.css';
@@ -83,6 +85,7 @@ import '@ionic/vue/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import './theme/global.scss';
 
 
 const app = createApp(App)
