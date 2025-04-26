@@ -25,11 +25,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 import { getAllFromReports, countHealthStatus, countTodayReports } from '@/compasables/useDatabase.js';
 import ReportCard from "@/components/ReportCard/ReportCard.vue";
 import DashboardWidget from "@/components/DashboardWidget/DashboardWidget.vue";
 import { IonSearchbar } from '@ionic/vue';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -48,6 +49,7 @@ export default defineComponent({
     const countTodayIllness = ref<number>(0);
     const activeFilter = ref<string | null>(null);
     const searchQuery = ref<any>('');
+    const route = useRoute();
 
     const getData = async () => {
       reportList.value = await getAllFromReports();
@@ -86,9 +88,11 @@ export default defineComponent({
       return reports;
     });
 
-    onMounted(async () => {
-      getData();
-    });
+    watch(() => route.fullPath, (newValue) => {
+      if (newValue === '/tabs/tab1') {
+        getData();
+      }
+    }, { immediate: true });
 
     return {
       reportList,
