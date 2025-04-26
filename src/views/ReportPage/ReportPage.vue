@@ -69,7 +69,7 @@
 
         <ion-item>
           <ion-label position="stacked" class="item-label">13. TQ</ion-label>
-          <ion-text class="item-text">{{ report.tq }}</ion-text>
+          <ion-text class="item-text">{{ formatTQ(report.tq) }}</ion-text>
         </ion-item>
 
         <ion-item>
@@ -217,6 +217,18 @@ export default defineComponent({
       return value || '';
     };
 
+    const formatTQ = (tq: any): string => {
+      if (!tq) return '';
+      
+      const parts = [];
+      if (tq.leftArm) parts.push(`ЛР: ${tq.leftArm}`);
+      if (tq.rightArm) parts.push(`ПР: ${tq.rightArm}`);
+      if (tq.leftLeg) parts.push(`ЛН: ${tq.leftLeg}`);
+      if (tq.rightLeg) parts.push(`ПН: ${tq.rightLeg}`);
+      
+      return parts.join(', ');
+    };
+
     const copyReport = async (reportData: any) => {
       const formattedText = `
 1. Стан - ${formatValue(reportData.healthStatus)}
@@ -231,7 +243,7 @@ export default defineComponent({
 10. Свідки - ${formatValue(reportData.witnesses)}
 11. Попередній діагноз - ${formatValue(reportData.diagnosis)}
 12. Надана допомога - ${formatValue(reportData.help)}
-13. TQ - ${formatValue(reportData.tq)}
+13. TQ - ${formatTQ(reportData.tq)}
 14. Стан в динаміці - ${formatValue(reportData.state)}
 15. В засобах індивідуального захисту - ${formatValue(reportData.additional)}
 16. Втрачене майно - ${formatValue(reportData.lost)}
@@ -284,6 +296,7 @@ export default defineComponent({
       sendReport,
       setOpenAlert,
       handleAlertDismiss,
+      formatTQ,
       pencil,
       copy,
       trash,

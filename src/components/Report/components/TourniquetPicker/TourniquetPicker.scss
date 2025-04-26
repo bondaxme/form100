@@ -1,0 +1,95 @@
+.tourniquet-container {
+  margin-bottom: 16px;
+}
+
+.tourniquet-label {
+  margin-bottom: 8px;
+  padding-left: 16px;
+  font-size: 16px;
+  color: var(--ion-color-medium);
+}
+
+.tourniquet-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  height: 130px;
+}
+
+.tourniquet-position {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b3b3b3;
+  border-radius: 8px;
+  padding: 12px;
+  gap: 8px;
+  transition: all 0.2s ease;
+  
+  &.active {
+    border: 2px solid var(--ion-color-primary);
+  }
+}
+
+.position-label {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.time-control {
+  position: relative;
+  width: 100%;
+}
+
+.time-select-button {
+  width: 100%;
+  --border-radius: 6px;
+  font-size: 14px;
+  margin: 0;
+}
+
+.clear-icon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  color: var(--ion-color-medium);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 5;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    z-index: -1;
+  }
+}
+
+ion-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 8px;
+  --padding-bottom: 0;
+  --overflow: hidden;
+}
+
+.time-picker-popover {
+  --width: 200px;
+  --max-width: 100%;
+}
+
+ion-datetime {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    --background: transparent;
+    --background-rgb: transparent;
+}

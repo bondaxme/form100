@@ -142,14 +142,9 @@
         fill="outline"
         mode="md"
     />
-    <ion-textarea
+    <tourniquet-picker
         v-model="form.tq"
-        class="ion-margin-bottom"
-        label="TQ"
-        label-placement="floating"
-        :auto-grow="true"
-        fill="outline"
-        mode="md"
+        label="Турнікет (TQ)"
     />
     <ion-textarea
         v-model="form.state"
@@ -218,6 +213,7 @@ import { postToReports, updateByIdInReports, searchInStaffTable } from '@/compas
 import NewStaffModal from "@/components/newStaff/newStaffModal.vue";
 import { formatBirthdateInput, validateBirthdate } from './composables/useDateValidation.ts';
 import DateTimePicker from './components/DateTimePicker/DateTimePicker.vue';
+import TourniquetPicker from './components/TourniquetPicker/TourniquetPicker.vue';
 
 export default defineComponent({
   props: {
@@ -235,7 +231,8 @@ export default defineComponent({
     IonSegment,
     IonSegmentButton,
     IonButton,
-    DateTimePicker
+    DateTimePicker,
+    TourniquetPicker
   },
   setup(props) {
     const router = useRouter();
@@ -254,7 +251,12 @@ export default defineComponent({
       witnesses: '',
       diagnosis: '',
       help: '',
-      tq: '',
+      tq: {
+        leftArm: '',
+        rightArm: '',
+        leftLeg: '',
+        rightLeg: ''
+      },
       state: '',
       additional: '',
       lost: '',
