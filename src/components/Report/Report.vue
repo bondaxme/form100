@@ -155,15 +155,21 @@
         fill="outline"
         mode="md"
     />
-    <ion-textarea
+    <ion-select
         v-model="form.additional"
         class="ion-margin-bottom"
         label="В засобах індивідуального захисту"
         label-placement="floating"
-        :auto-grow="true"
         fill="outline"
         mode="md"
-    />
+    >
+      <ion-select-option value="Без ознак алкогольного/наркотичного сп’яніння">
+        Без ознак алкогольного/наркотичного сп’яніння
+      </ion-select-option>
+      <ion-select-option value="В стані наркотичного сп'яніння">
+        В стані наркотичного сп'яніння
+      </ion-select-option>
+    </ion-select>
     <ion-textarea
         v-model="form.lost"
         class="ion-margin-bottom"
@@ -258,7 +264,7 @@ export default defineComponent({
         rightLeg: ''
       },
       state: '',
-      additional: '',
+      additional: 'Без ознак алкогольного/наркотичного сп’яніння',
       lost: '',
       timePass: '',
       evacuatedBy: '',
@@ -268,6 +274,9 @@ export default defineComponent({
     watch(() => props.report, (value) => {
       if (value) {
         form.value = value;
+        if (!form.value.additional) {
+          form.value.additional = 'Без ознак алкогольного/наркотичного сп’яніння';
+        }
       }
     }, { deep: true, immediate: true });
 

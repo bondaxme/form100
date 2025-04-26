@@ -14,8 +14,11 @@
   // --background-color: black;
   // --background-focused: black;
 }
-ion-input, ion-textarea {
+ion-input, ion-textarea, ion-select {
   --border-radius: 10px !important;
+}
+ion-select::part(label) {
+  color: var(--ion-color-medium);
 }
 .buttons-block {
   display: flex;
