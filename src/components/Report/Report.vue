@@ -177,15 +177,30 @@
         fill="outline"
         mode="md"
     />
-    <ion-textarea
-        v-model="form.timePass"
+    <date-time-picker
+        v-model="form.timePass.time"
+        label="Час передачі"
+    />
+    <ion-select
+        v-model="form.timePass.place"
         class="ion-margin-bottom"
-        label="Час передачі на"
+        label="Місце передачі"
         label-placement="floating"
-        :auto-grow="true"
+        interface="popover"
+        :interfaceOptions="{ mode: 'ios', side: 'bottom' }"
         fill="outline"
         mode="md"
-    />
+    >
+      <ion-select-option value="МП батальйону">
+        МП батальйону
+      </ion-select-option>
+      <ion-select-option value="МП бригади">
+        МП бригади
+      </ion-select-option>
+      <ion-select-option value="СП бригади">
+        СП бригади
+      </ion-select-option>
+    </ion-select>
     <evacuated-by-picker
         v-model="form.evacuatedBy"
         :type="type"
@@ -265,7 +280,10 @@ export default defineComponent({
       state: '',
       additional: 'Без ознак алкогольного/наркотичного сп’яніння',
       lost: '',
-      timePass: '',
+      timePass: {
+        time: '',
+        place: ''
+      },
       evacuatedBy: '',
       healthStatus: ''
     });
@@ -275,6 +293,11 @@ export default defineComponent({
         form.value = value;
         if (!form.value.additional) {
           form.value.additional = 'Без ознак алкогольного/наркотичного сп’яніння';
+        }
+        if (!form.value.timePass) {
+          form.value.timePass = { time: '', place: '' };
+        } else if (typeof form.value.timePass !== 'object') {
+          form.value.timePass = { time: '', place: '' };
         }
       }
     }, { deep: true, immediate: true });

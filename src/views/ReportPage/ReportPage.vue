@@ -9,7 +9,7 @@
 
         <ion-item>
           <ion-label position="stacked" class="item-label">2. Дата та час події</ion-label>
-          <ion-text class="item-text">{{ report.date }}</ion-text>
+          <ion-text class="item-text">{{ formatDate(report.date) }}</ion-text>
         </ion-item>
 
         <ion-item>
@@ -89,7 +89,7 @@
 
         <ion-item>
           <ion-label position="stacked" class="item-label">17. Час передачі на</ion-label>
-          <ion-text class="item-text">{{ report.timePass }}</ion-text>
+          <ion-text class="item-text">{{ formatTimePass(report.timePass) }}</ion-text>
         </ion-item>
 
         <ion-item>
@@ -211,6 +211,17 @@ export default defineComponent({
       isOpenAlert.value = state;
     };
 
+    const formatDate = (date: string): string => {
+      const dateObj = new Date(date);
+      return dateObj.toLocaleString('uk-UA', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    };
+
     const formatValue = (value: any): string => {
       return value || '';
     };
@@ -225,6 +236,15 @@ export default defineComponent({
       if (tq.rightLeg) parts.push(`ПН: ${tq.rightLeg}`);
       
       return parts.join(', ');
+    };
+    const formatTimePass = (timePass: any): string => {
+      if (!timePass) return '';
+      
+      const parts = [];
+      if (timePass.place) parts.push(`${timePass.place}`);
+      if (timePass.time) parts.push(`${formatDate(timePass.time)}`);
+      
+      return parts.join(' ');
     };
 
     const copyReport = async (reportData: any) => {
@@ -245,7 +265,7 @@ export default defineComponent({
 14. Стан в динаміці - ${formatValue(reportData.state)}
 15. В засобах індивідуального захисту - ${formatValue(reportData.additional)}
 16. Втрачене майно - ${formatValue(reportData.lost)}
-17. Час передачі на - ${formatValue(reportData.timePass)}
+17. Час передачі на - ${formatTimePass(reportData.timePass)}
 18. Ким евакуйований - ${formatValue(reportData.evacuatedBy)}
       `.trim();
 
@@ -295,6 +315,8 @@ export default defineComponent({
       setOpenAlert,
       handleAlertDismiss,
       formatTQ,
+      formatTimePass,
+      formatDate,
       pencil,
       copy,
       trash,
