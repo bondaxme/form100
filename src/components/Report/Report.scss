@@ -61,3 +61,8 @@ ion-select::part(label) {
     color: #666;
   }
 }
+ion-list {
+  ion-item {
+    --background: rgb(236, 236, 236);
+  }
+}

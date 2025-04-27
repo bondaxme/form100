@@ -30,6 +30,11 @@ export {
 } from './locations';
 
 export {
+    addSituation,
+    searchInSituations
+} from './situations';
+
+export {
     countHealthStatus,
     countTodayReports
 } from './statistics';

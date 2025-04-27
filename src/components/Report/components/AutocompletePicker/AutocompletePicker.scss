@@ -1,0 +1,23 @@
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.autocomplete-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10000;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+ion-list {
+  ion-item {
+    --background: rgb(236, 236, 236);
+  }
+}

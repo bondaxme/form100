@@ -100,18 +100,17 @@
         v-model="form.date"
         label="Дата та час події"
     />
-    <location-picker
+    <autocomplete-picker
         v-model="form.location"
         class="ion-margin-bottom"
         label="Місце події"
+        search-type="locations"
     />
-    <ion-input
+    <autocomplete-picker
         v-model="form.situation"
         class="ion-margin-bottom"
         label="Обставини"
-        label-placement="floating"
-        fill="outline"
-        mode="md"
+        search-type="situations"
     />
     <ion-input
         v-model="form.witnesses"
@@ -216,8 +215,8 @@ import { formatBirthdateInput, validateBirthdate } from './composables/useDateVa
 import DateTimePicker from './components/DateTimePicker/DateTimePicker.vue';
 import TourniquetPicker from './components/TourniquetPicker/TourniquetPicker.vue';
 import EvacuatedByPicker from './components/EvacuatedByPicker/EvacuatedByPicker.vue';
-import LocationPicker from './components/LocationPicker/LocationPicker.vue';
-import { addLocation } from '@/compasables/useDatabase.js';
+import AutocompletePicker from './components/AutocompletePicker/AutocompletePicker.vue';
+import { addLocation, addSituation } from '@/compasables/useDatabase.js';
 
 export default defineComponent({
   props: {
@@ -238,7 +237,7 @@ export default defineComponent({
     DateTimePicker,
     TourniquetPicker,
     EvacuatedByPicker,
-    LocationPicker
+    AutocompletePicker
   },
   setup(props) {
     const router = useRouter();
@@ -374,9 +373,11 @@ export default defineComponent({
           return;
         }
         
-        // Зберігаємо місце події в базу даних, якщо воно введене
         if (form.value.location && form.value.location.trim() !== '') {
           await addLocation(form.value.location);
+        }
+        if (form.value.situation && form.value.situation.trim() !== '') {
+          await addSituation(form.value.situation);
         }
         
         if (props.type === 'edit') {
