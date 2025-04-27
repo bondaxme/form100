@@ -19,13 +19,22 @@ ion-select::part(label) {
 }
 .buttons-block {
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   width: 100%;
   padding: 10px;
   margin-bottom: 0px;
   border-top: #dddddd 1px solid;
   background-color: #fff;
   bottom: 0;
+}
+.reset-button {
+  --padding-start: 0;
+  --padding-end: 0;
+  width: 12%;
+}
+
+.save-button {
+  width: 86%;
 }
 .input-wrapper {
   position: relative;

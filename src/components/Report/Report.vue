@@ -209,15 +209,32 @@
     <div class="buttons-block" slot="fixed">
       <ion-button
         expand="block"
+        color="light"
+        shape="round"
+        class="reset-button"
+        @click="resetForm"
+      >
+        <ion-icon :icon="closeOutline"></ion-icon>
+      </ion-button>
+      <ion-button
+        expand="block"
         color="primary"
         shape="round"
-        style="width: 100%"
+        class="save-button"
         @click="saveReport"
       >
-      Зберегти
+        Зберегти
       </ion-button>
     </div>
   </ion-content>
+  <ion-toast
+    :is-open="isOpenAlert"
+    position="top"
+    color="primary"
+    :message="toastMessage"
+    :duration="2000"
+    @didDismiss="setOpenAlert(false)"
+    ></ion-toast>
 </template>
 
 <script lang="js">
@@ -232,6 +249,7 @@ import TourniquetPicker from './components/TourniquetPicker/TourniquetPicker.vue
 import EvacuatedByPicker from './components/EvacuatedByPicker/EvacuatedByPicker.vue';
 import AutocompletePicker from './components/AutocompletePicker/AutocompletePicker.vue';
 import { addLocation, addSituation } from '@/compasables/useDatabase.js';
+import { closeOutline } from 'ionicons/icons';
 
 export default defineComponent({
   props: {
@@ -258,6 +276,13 @@ export default defineComponent({
     const router = useRouter();
     const isFocused = ref(false);
     const birthdateError = ref('');
+    const toastMessage = ref('');
+    const isOpenAlert = ref(false);
+    
+    const setOpenAlert = (state) => {
+      isOpenAlert.value = state;
+    };
+
     const form = ref({
       date: '',
       name: '',
@@ -382,6 +407,46 @@ export default defineComponent({
       }
     };
 
+    const resetForm = () => {
+      try {
+        form.value = {
+          date: '',
+          name: '',
+          nickname: '',
+          birthday: '',
+          unit: '',
+          rank: '',
+          phone: '',
+          location: '',
+          situation: '',
+          witnesses: '',
+          diagnosis: '',
+          help: '',
+          tq: {
+          leftArm: '',
+          rightArm: '',
+          leftLeg: '',
+          rightLeg: ''
+          },
+          state: '',
+          additional: 'Без ознак алкогольного/наркотичного сп’яніння',
+          lost: '',
+          timePass: {
+          time: '',
+          place: ''
+          },
+          evacuatedBy: '',
+          healthStatus: ''
+        };
+        birthdateError.value = '';
+        searchedStaffByNickame.value = [];
+        toastMessage.value = 'Форма очищена';
+        setOpenAlert(true);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const saveReport = async () => {
       try {
         birthdateError.value = '';
@@ -424,11 +489,16 @@ export default defineComponent({
       form,
       // searchedStaffByName,
       searchedStaffByNickame,
+      closeOutline,
       onNameChange,
       showNewStaffModal,
+      setOpenAlert,
+      isOpenAlert,
+      toastMessage,
       selectStaff,
       setStaffData,
       saveReport,
+      resetForm,
       isFocused,
       onFocus,
       onBlur,
