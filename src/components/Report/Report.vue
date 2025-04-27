@@ -103,7 +103,7 @@
     <ion-input
         v-model="form.location"
         class="ion-margin-bottom"
-        label="Звання, посада"
+        label="Місце події"
         label-placement="floating"
         fill="outline"
         mode="md"
@@ -160,6 +160,8 @@
         class="ion-margin-bottom"
         label="В засобах індивідуального захисту"
         label-placement="floating"
+        interface="popover"
+        :interfaceOptions="{ mode: 'ios', side: 'bottom' }"
         fill="outline"
         mode="md"
     >
@@ -188,14 +190,10 @@
         fill="outline"
         mode="md"
     />
-    <ion-textarea
+    <evacuated-by-picker
         v-model="form.evacuatedBy"
-        class="last-input"
-        label="Ким евакуйований"
-        label-placement="floating"
-        :auto-grow="true"
-        fill="outline"
-        mode="md"
+        :type="type"
+        :is-last-input="true"
     />
     <div class="buttons-block" slot="fixed">
       <ion-button
@@ -220,6 +218,7 @@ import NewStaffModal from "@/components/newStaff/newStaffModal.vue";
 import { formatBirthdateInput, validateBirthdate } from './composables/useDateValidation.ts';
 import DateTimePicker from './components/DateTimePicker/DateTimePicker.vue';
 import TourniquetPicker from './components/TourniquetPicker/TourniquetPicker.vue';
+import EvacuatedByPicker from './components/EvacuatedByPicker/EvacuatedByPicker.vue';
 
 export default defineComponent({
   props: {
@@ -238,7 +237,8 @@ export default defineComponent({
     IonSegmentButton,
     IonButton,
     DateTimePicker,
-    TourniquetPicker
+    TourniquetPicker,
+    EvacuatedByPicker
   },
   setup(props) {
     const router = useRouter();

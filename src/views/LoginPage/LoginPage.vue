@@ -59,13 +59,10 @@
 <script lang="ts">
 import { defineComponent, ref, onMounted } from 'vue';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { IonToast, useIonRouter } from '@ionic/vue';
+import { useIonRouter } from '@ionic/vue';
 import { savePassword, getPassword, createSession } from '@/compasables/useDatabase';
 
 export default defineComponent({
-  components: {
-    IonToast
-  },
   setup() {
     const password = ref('');
     const confirmPassword = ref('');

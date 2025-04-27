@@ -149,7 +149,6 @@
         :is-open="isOpenAlert"
         position="top"
         color="primary"
-        position-anchor="header"
         :message="toastMessage"
         :duration="2000"
         @didDismiss="setOpenAlert(false)"
@@ -179,12 +178,11 @@
 import {defineComponent, onMounted, ref} from 'vue';
 import { useRoute } from 'vue-router';
 import {getByIdFromReports, deleteFromReports} from '@/compasables/useDatabase.js';
-import {useIonRouter, IonToast, IonAlert} from "@ionic/vue";
+import {useIonRouter, IonAlert} from "@ionic/vue";
 import { pencil, copy, trash, send } from 'ionicons/icons';
 
 export default defineComponent({
-  components: { 
-    IonToast,
+  components: {
     IonAlert 
   },
   setup() {

@@ -1,7 +1,10 @@
 <template>
   <ion-page style="margin-top: 56px">
     <ion-content :fullscreen="true">
-      <ion-item style="margin-top: 24px" lines="none">
+      <ion-item lines="none">
+        <NicknameSettings @show-toast="showToastMessage" />
+      </ion-item>
+      <ion-item lines="none">
         <FileUploader @show-toast="showToastMessage" />
       </ion-item>
       <ion-item lines="none">
@@ -14,7 +17,6 @@
       :message="toastMessage"
       :duration="2000"
       position="top"
-      position-anchor="header"
       :color="toastColor"
       @didDismiss="showToast = false"
     ></ion-toast>
@@ -23,17 +25,17 @@
 
 <script lang="ts">
 import { ref } from 'vue';
-import FileUploader from '@/components/FileUploader/FileUploader.vue';
+import FileUploader from '@/components/Settings/FileUploader/FileUploader.vue';
 import ViewDataButton from '@/components/ViewDataButton/ViewDataButton.vue';
-import ClearDataButton from '@/components/ClearDataButton/ClearDataButton.vue';
-import { IonToast } from "@ionic/vue";
+import ClearDataButton from '@/components/Settings/ClearDataButton/ClearDataButton.vue';
+import NicknameSettings from '@/components/Settings/NicknameSettings/NicknameSettings.vue';
 
 export default {
   components: {
     FileUploader,
     ViewDataButton,
     ClearDataButton,
-    IonToast
+    NicknameSettings
   },
   setup() {
     const showToast = ref(false);
@@ -55,3 +57,7 @@ export default {
   }
 };
 </script>
+
+<style scoped lang="scss">
+@import "./Tab3Page.scss";
+</style>

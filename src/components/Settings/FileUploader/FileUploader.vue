@@ -192,5 +192,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  @import "@/components/FileUploader/FileUploader.scss";
+  @import "./FileUploader.scss";
 </style>

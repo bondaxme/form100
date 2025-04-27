@@ -1,0 +1,30 @@
+.input-container {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 5px 0 20px;
+}
+
+ion-input::part(label) {
+  color: var(--ion-color-medium) !important;
+}
+
+.save-button {
+  font-size: 16px;
+}
+
+ion-input {
+  flex: 1;
+  margin: 0;
+}
+
+ion-button {
+  margin: 0;
+}
+
+:deep {
+  .label-text {
+    color: #666;
+  }
+}

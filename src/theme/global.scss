@@ -7,10 +7,11 @@
   --background-activated: var(--ion-color-primary-focused) !important;
   --background-focused: var(--ion-color-primary-focused) !important;
 }
+ion-input, ion-textarea, ion-select {
+  --border-radius: 10px !important;
+}
 .select-popover {
   ion-item {
     --background: rgb(236, 236, 236);
-    white-space: normal;
-    overflow-wrap: break-word;
   }
 }

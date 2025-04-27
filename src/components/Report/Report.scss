@@ -14,9 +14,6 @@
   // --background-color: black;
   // --background-focused: black;
 }
-ion-input, ion-textarea, ion-select {
-  --border-radius: 10px !important;
-}
 ion-select::part(label) {
   color: var(--ion-color-medium);
 }
@@ -44,7 +41,7 @@ ion-select::part(label) {
   max-height: 200px;
   overflow-y: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-top: -15px; /* Adjust this value to fine-tune the position */
+  margin-top: -15px;
 }
 .last-input {
   margin-bottom: 78.4px;
