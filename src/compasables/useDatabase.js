@@ -25,6 +25,11 @@ export {
 } from './staff';
 
 export {
+    addLocation,
+    searchInLocations
+} from './locations';
+
+export {
     countHealthStatus,
     countTodayReports
 } from './statistics';

@@ -38,6 +38,12 @@ interface IStaff {
     unit5?: string;
 }
 
+interface ILocation {
+    id?: number;
+    name: string;
+    usageCount?: number;
+}
+
 interface ISettings {
     key: string;
     value: any;
@@ -46,14 +52,16 @@ interface ISettings {
 class AppDatabase extends Dexie {
     reportsTable!: Table<IReport>;
     staffTable!: Table<IStaff>;
+    locationsTable!: Table<ILocation>;
     settingsTable!: Table<ISettings>;
 
     constructor() {
         super('Form100');
-        this.version(3).stores({
+        this.version(4).stores({
             reportsTable: '++id, name, nickname, birthday, unit, rank, phone, location, situation, witnesses, diagnosis, help, tq, state, additional, lost, timePass, evacuatedBy, healthStatus, createdAt',
             staffTable: '++id, rank, name, nickname, phone, birthday, workPosition, unit, unit2, unit3, unit4, unit5',
             // staffTable: '++id, Звання, ПІБ, Позивний, телефон, дата народження, Посада, Відділення, Взвод, Рота, Батальйон, Бригада'
+            locationsTable: '++id, name, usageCount',
             settingsTable: 'key, value'
         });
     }

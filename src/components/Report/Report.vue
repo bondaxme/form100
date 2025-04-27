@@ -100,13 +100,10 @@
         v-model="form.date"
         label="Дата та час події"
     />
-    <ion-input
+    <location-picker
         v-model="form.location"
         class="ion-margin-bottom"
         label="Місце події"
-        label-placement="floating"
-        fill="outline"
-        mode="md"
     />
     <ion-input
         v-model="form.situation"
@@ -219,6 +216,8 @@ import { formatBirthdateInput, validateBirthdate } from './composables/useDateVa
 import DateTimePicker from './components/DateTimePicker/DateTimePicker.vue';
 import TourniquetPicker from './components/TourniquetPicker/TourniquetPicker.vue';
 import EvacuatedByPicker from './components/EvacuatedByPicker/EvacuatedByPicker.vue';
+import LocationPicker from './components/LocationPicker/LocationPicker.vue';
+import { addLocation } from '@/compasables/useDatabase.js';
 
 export default defineComponent({
   props: {
@@ -238,7 +237,8 @@ export default defineComponent({
     IonButton,
     DateTimePicker,
     TourniquetPicker,
-    EvacuatedByPicker
+    EvacuatedByPicker,
+    LocationPicker
   },
   setup(props) {
     const router = useRouter();
@@ -372,6 +372,11 @@ export default defineComponent({
             document.querySelector('.error-message')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
           }, 100);
           return;
+        }
+        
+        // Зберігаємо місце події в базу даних, якщо воно введене
+        if (form.value.location && form.value.location.trim() !== '') {
+          await addLocation(form.value.location);
         }
         
         if (props.type === 'edit') {
