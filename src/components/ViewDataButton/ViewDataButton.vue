@@ -14,8 +14,9 @@
 
 <script lang="ts">
 import { useIonRouter } from '@ionic/vue';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent ({
   setup() {
     const ionRouter = useIonRouter();
     const toStaffPage = () => {
@@ -26,7 +27,7 @@ export default {
       toStaffPage
     };
   }
-};
+});
 </script>
 
 <style scoped lang="scss">

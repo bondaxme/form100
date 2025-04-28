@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { cloudUploadOutline, downloadOutline } from 'ionicons/icons';
 import { postToStaffTable, getAllFromStaffTable } from '@/compasables/useDatabase.js';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -39,7 +39,7 @@ interface StaffData {
   [key: string]: string | undefined;
 }
 
-export default {
+export default defineComponent({
   emits: ['show-toast'],
   setup(props, { emit }) {
     const selectedFileName = ref('');
@@ -217,7 +217,7 @@ export default {
       triggerFileInput
     };
   }
-};
+});
 </script>
 
 <style scoped lang="scss">

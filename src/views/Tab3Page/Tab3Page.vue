@@ -24,13 +24,13 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import FileUploader from '@/components/Settings/FileUploader/FileUploader.vue';
 import ViewDataButton from '@/components/ViewDataButton/ViewDataButton.vue';
 import ClearDataButton from '@/components/Settings/ClearDataButton/ClearDataButton.vue';
 import NicknameSettings from '@/components/Settings/NicknameSettings/NicknameSettings.vue';
 
-export default {
+export default defineComponent({
   components: {
     FileUploader,
     ViewDataButton,
@@ -55,7 +55,7 @@ export default {
       showToastMessage
     };
   }
-};
+});
 </script>
 
 <style scoped lang="scss">

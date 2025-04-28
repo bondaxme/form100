@@ -16,12 +16,12 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineComponent } from 'vue';
 import db from '@/compasables/database';
 import { IonInput, IonButton, IonIcon } from '@ionic/vue';
 import { saveOutline } from 'ionicons/icons';
 
-export default {
+export default defineComponent ({
   components: {
     IonInput,
     IonButton,
@@ -77,7 +77,7 @@ export default {
       saveOutline
     };
   }
-};
+});
 </script>
 
 <style scoped lang="scss">
