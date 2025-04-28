@@ -4,7 +4,7 @@ import db from './database';
 export const postToReports = async (data: any) => {
     try {
         const rawData = toRaw(data);
-        rawData.createdAt = new Date().toString();
+        rawData.createdAt = new Date().toISOString();
         const id = await db.reportsTable.add(rawData);
         console.log('Data added with ID:', id);
         return id;
@@ -37,8 +37,8 @@ export const getByIdFromReports = async (id: number) => {
 
 export const getAllFromReports = async () => {
     try {
-        const allData = await db.reportsTable.toArray();
-        console.log('All data:', allData);
+        const allData = await db.reportsTable.orderBy('createdAt').reverse().toArray();
+        console.log('All data ordered by createdAt:', allData);
         return allData;
     } catch (error) {
         console.error('Failed to retrieve data:', error);

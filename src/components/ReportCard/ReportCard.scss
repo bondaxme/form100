@@ -2,3 +2,8 @@
   margin-bottom: 16px;
   cursor: pointer;
 }
+
+ion-card-header {
+  flex-direction: row;
+  justify-content: space-between;
+}

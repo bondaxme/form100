@@ -5,8 +5,11 @@
       :style="borderColor"
   >
     <ion-card-header>
-      <ion-card-title>{{ report.nickname }}</ion-card-title>
-      <ion-card-subtitle>{{ report.name }}</ion-card-subtitle>
+      <div class="card-header">
+        <ion-card-title>{{ report.nickname }}</ion-card-title>
+        <ion-card-subtitle>{{ report.name }}</ion-card-subtitle>
+      </div>
+      <ion-card-subtitle>{{ createdAtDisplay }}</ion-card-subtitle>
     </ion-card-header>
 
     <ion-card-content>
@@ -46,9 +49,25 @@ export default defineComponent({
       return { borderLeft: `3px solid ${color}` };
     });
 
+    const createdAtDisplay = computed(() => {
+      if (!props.report.createdAt) return '';
+      const date = new Date(props.report.createdAt);
+      const now = new Date();
+      if (date.toDateString() === now.toDateString()) {
+        return date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+      }
+      return date.toLocaleString('uk-UA', {
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    });
+
     return {
       toReportView,
-      borderColor
+      borderColor,
+      createdAtDisplay
     };
   },
 });
