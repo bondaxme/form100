@@ -45,6 +45,7 @@
       </div>
       <new-staff-modal
           v-if="type === 'create' && showNewStaffModal && form.nickname?.length > 3"
+        :initial-nickname="form.nickname"
         @new-staff="setStaffData"
       />
     </div>

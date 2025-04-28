@@ -20,7 +20,7 @@
       </ion-toolbar>
     </ion-header>
     <ion-content class="ion-padding">
-      <ion-textarea
+      <ion-input
           v-model="form.nickname"
           class="ion-margin-bottom"
           label="Позивний"
@@ -44,7 +44,13 @@
           label-placement="floating"
           fill="outline"
           mode="md"
+          :maxlength="10"
+          placeholder="ДД.ММ.РРРР"
+          @ionInput="formatBirthdate"
       />
+      <div v-if="birthdateError" class="error-message">
+        {{ birthdateError }}
+      </div>
       <ion-input
           v-model="form.rank"
           class="ion-margin-bottom"
@@ -133,6 +139,7 @@ import {
 import { OverlayEventDetail } from '@ionic/core/components';
 import {defineComponent, ref} from 'vue';
 import {postToStaffTable} from "@/compasables/useDatabase";
+import { formatBirthdateInput, validateBirthdate } from '@/components/Report/composables/useDateValidation';
 
 export default defineComponent({
   components: {
@@ -145,10 +152,16 @@ export default defineComponent({
     IonTitle,
     IonInput,
   },
-  setup(_props, {emit}) {
+  props: {
+    initialNickname: {
+      type: String,
+      default: ''
+    }
+  },
+  setup(props, { emit }) {
     const modal = ref();
     const form = ref({
-      nickname: '',
+      nickname: props.initialNickname,
       name: '',
       birthday: '',
       rank: '',
@@ -161,9 +174,45 @@ export default defineComponent({
       unit5: '',
     });
 
+    const birthdateError = ref('');
+
+    const formatBirthdate = (event: any) => {
+      const formatted = formatBirthdateInput(event.target.value);
+      
+      event.target.value = formatted;
+      form.value.birthday = formatted;
+      
+      if (!formatted) {
+        birthdateError.value = '';
+        return;
+      }
+
+      if (formatted.length === 10) {
+        const birthdateValidation = validateBirthdate(formatted);
+        if (birthdateValidation !== true && !birthdateValidation.valid) {
+          birthdateError.value = birthdateValidation.message;
+        } else {
+          birthdateError.value = '';
+        }
+      } else if (formatted.length > 0) {
+        birthdateError.value = '';
+      }
+    };
+
     const cancel = () => modal.value.$el.dismiss(null, 'cancel');
 
     const confirm = async () => {
+      birthdateError.value = '';
+        
+      const birthdateValidation = validateBirthdate(form.value.birthday);
+      
+      if (birthdateValidation !== true && !birthdateValidation.valid) {
+        birthdateError.value = birthdateValidation.message;
+        setTimeout(() => {
+          document.querySelector('.error-message')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+        return;
+      }
       await postToStaffTable(form.value);
       emit('new-staff', form.value);
       modal.value.$el.dismiss(name, 'confirm');
@@ -180,15 +229,13 @@ export default defineComponent({
       cancel,
       confirm,
       onWillDismiss,
+      formatBirthdate,
+      birthdateError,
     };
   },
 });
 </script>
 
 <style lang="scss">
-:deep {
-  .label-text {
-    color: #666;
-  }
-}
+  @import "@/components/newStaff/newStaffModal.scss";
 </style>
