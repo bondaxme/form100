@@ -10,10 +10,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, computed } from 'vue';
+import { defineComponent, ref, computed, watch } from 'vue';
 import { getAllFromStaffTable } from '@/compasables/useDatabase.js';
 import StaffCard from "@/components/StaffCard/StaffCard.vue";
 import { IonSearchbar, useIonRouter } from '@ionic/vue';
+import { useRoute } from 'vue-router';
 
 export default defineComponent({
   components: {
@@ -23,6 +24,7 @@ export default defineComponent({
   setup() {
     const staffList = ref<any>([]);
     const searchQuery = ref<any>('');
+    const route = useRoute();
 
     const getData = async () => {
       staffList.value = await getAllFromStaffTable();
@@ -45,9 +47,11 @@ export default defineComponent({
       });
     });
 
-    onMounted(async () => {
-      await getData();
-    });
+    watch(() => route.fullPath, async (newValue) => {
+      if (newValue === '/tabs/staff') {
+        await getData();
+      }
+    }, { immediate: true });
 
     return {
       staffList,

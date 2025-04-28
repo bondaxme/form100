@@ -83,6 +83,15 @@ export default {
       reader.readAsText(file);
     };
 
+    const wrapForCSV = (value: string | undefined): string => {
+      if (!value) return '';
+      const needsQuoting = value.includes(',') || value.includes('"') || value.includes('\n');
+      if (needsQuoting) {
+        return `"${value.replace(/"/g, '""')}"`;
+      }
+      return value;
+    };
+
     const exportToCSV = async () => {
       try {
         const staffList = await getAllFromStaffTable();
@@ -91,17 +100,17 @@ export default {
         
         const csvData = staffList.map((staff: any) => {
           return [
-            staff.rank || '',
-            staff.name || '',
-            staff.nickname || '',
-            staff.phone || '',
-            staff.birthday || '',
-            staff.workPosition || '',
-            staff.unit || '',
-            staff.unit2 || '',
-            staff.unit3 || '',
-            staff.unit4 || '',
-            staff.unit5 || ''
+            wrapForCSV(staff.rank),
+            wrapForCSV(staff.name),
+            wrapForCSV(staff.nickname),
+            wrapForCSV(staff.phone),
+            wrapForCSV(staff.birthday),
+            wrapForCSV(staff.workPosition),
+            wrapForCSV(staff.unit),
+            wrapForCSV(staff.unit2),
+            wrapForCSV(staff.unit3),
+            wrapForCSV(staff.unit4),
+            wrapForCSV(staff.unit5)
           ].join(',');
         });
 
@@ -142,9 +151,31 @@ export default {
     };
 
     const parseCSV = (text: string): StaffData[] => {
-      const lines = text.split('\n');
-      const headers = lines[0].split(',');
+      const lines = text.split('\n').map(line => line.trim()).filter(line => line);
+      if (!lines.length) return [];
 
+      // Parse a single line respecting quoted fields
+      const parseLine = (line: string): string[] => {
+        const result: string[] = [];
+        let cur = '';
+        let inQuotes = false;
+
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            inQuotes = !inQuotes;
+          } else if (char === ',' && !inQuotes) {
+            result.push(cur);
+            cur = '';
+          } else {
+            cur += char;
+          }
+        }
+        result.push(cur);
+        return result.map(r => r.trim());
+      };
+
+      const headers = parseLine(lines[0]);
       const fieldMap: Record<string, string> = {
         'звання': 'rank',
         'піб': 'name',
@@ -152,24 +183,22 @@ export default {
         'телефон': 'phone',
         'дата народження': 'birthday',
         'посада': 'workPosition',
-        'відділення': 'unit1',
+        'відділення': 'unit',
         'взвод': 'unit2',
         'рота': 'unit3',
         'батальйон': 'unit4',
         'бригада': 'unit5'
       };
 
-      const data = lines.slice(1).map(line => {
-        const values = line.split(',');
+      return lines.slice(1).map(line => {
+        const values = parseLine(line);
         const obj: StaffData = {};
-        headers.forEach((header: string, index: number) => {
-          const normalizedHeader = header.trim().toLowerCase();
-          const key = fieldMap[normalizedHeader] || normalizedHeader;
-          obj[key] = values[index]?.trim();
+        headers.forEach((header, idx) => {
+          const key = fieldMap[header.toLowerCase()] || header.toLowerCase();
+          obj[key] = values[idx];
         });
         return obj;
       });
-      return data;
     };
 
     const saveDataToIndexedDB = async (data: StaffData[]) => {

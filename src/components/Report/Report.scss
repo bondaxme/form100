@@ -30,11 +30,13 @@ ion-select::part(label) {
 .reset-button {
   --padding-start: 0;
   --padding-end: 0;
-  width: 12%;
+  height: 50px;
+  width: 50px;
 }
 
 .save-button {
-  width: 86%;
+  width: auto;
+  flex: 1;
 }
 .input-wrapper {
   position: relative;

@@ -212,6 +212,7 @@ export default defineComponent({
     };
 
     const formatDate = (date: string): string => {
+      if (!date) return '';
       const dateObj = new Date(date);
       return dateObj.toLocaleString('uk-UA', {
         year: 'numeric',
@@ -250,7 +251,7 @@ export default defineComponent({
     const copyReport = async (reportData: any) => {
       const formattedText = `
 1. Стан - ${formatValue(reportData.healthStatus)}
-2. Дата та час події - ${formatValue(reportData.date)}
+2. Дата та час події - ${formatValue(formatDate(reportData.date))}
 3. Позивний (ПІБ) - ${formatValue(reportData.nickname)}
 4. ПІБ - ${formatValue(reportData.name)}
 5. Підрозділ - ${formatValue(reportData.unit)}

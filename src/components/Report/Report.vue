@@ -90,7 +90,6 @@
     <ion-input
         v-model="form.phone"
         class="ion-margin-bottom"
-        type="number"
         label="Телефон"
         label-placement="floating"
         fill="outline"
