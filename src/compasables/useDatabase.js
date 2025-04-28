@@ -36,5 +36,6 @@ export {
 
 export {
     countHealthStatus,
-    countTodayReports
+    countTodayReports,
+    getStatisticsByDate
 } from './statistics';

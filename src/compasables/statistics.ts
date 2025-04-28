@@ -30,3 +30,54 @@ export const countTodayReports = async (status: string) => {
         return 0;
     }
 };
+
+export const getStatisticsByDate = async (daysCount = 7) => {
+    try {
+        const reports = await db.reportsTable.toArray();
+        
+        const dates = [];
+        const now = new Date();
+        for (let i = daysCount - 1; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(date.getDate() - i);
+            date.setHours(0, 0, 0, 0);
+            dates.push({
+                date: date,
+                dateString: date.toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' })
+            });
+        }
+        
+        const stats = dates.map(dateObj => {
+            const dayData = {
+                date: dateObj.dateString,
+                '300': 0,
+                '200': 0,
+                'Хвороба': 0,
+                total: 0
+            };
+            
+            reports.forEach(report => {
+                if (!report.createdAt) return;
+                
+                const reportDate = new Date(report.createdAt);
+                reportDate.setHours(0, 0, 0, 0);
+                
+                if (reportDate.getTime() === dateObj.date.getTime()) {
+                    if (report.healthStatus === '300' || 
+                        report.healthStatus === '200' || 
+                        report.healthStatus === 'Хвороба') {
+                        dayData[report.healthStatus]++;
+                        dayData.total++;
+                    }
+                }
+            });
+            
+            return dayData;
+        });
+        
+        return stats;
+    } catch (error) {
+        console.error('Failed to get statistics by date:', error);
+        return [];
+    }
+};

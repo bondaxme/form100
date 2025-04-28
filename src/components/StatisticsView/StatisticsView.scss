@@ -1,0 +1,83 @@
+.statistics-view {
+  padding: 16px;
+}
+
+.statistics-header {
+  margin-bottom: 20px;
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    color: #333;
+  }
+}
+
+.status-segment {
+  margin-bottom: 16px;
+  --background: var(--ion-color-light);
+  
+  ion-segment-button {
+    --color: var(--ion-color-medium);
+    --color-checked: var(--ion-color-primary);
+    --indicator-color: transparent;
+  }
+}
+
+.days-select {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.statistics-table {
+  overflow-x: auto;
+  margin-bottom: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  
+  .table-container {
+    width: 100%;
+    min-width: 350px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    
+    th, td {
+      padding: 12px 8px;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+    }
+    
+    th {
+      font-weight: 600;
+      background-color: #f5f5f5;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .type-300 {
+      color: var(--accent-color);
+    }
+    
+    .type-200 {
+      color: var(--danger-color);
+    }
+    
+    .type-disease {
+      color: var(--disease-color);
+    }
+  }
+}
+
+.statistics-chart {
+  height: 250px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px 20px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}

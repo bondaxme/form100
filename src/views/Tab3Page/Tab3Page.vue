@@ -5,6 +5,18 @@
         <NicknameSettings @show-toast="showToastMessage" />
       </ion-item>
       <ion-item lines="none">
+        <ion-button 
+          expand="block" 
+          color="primary" 
+          @click="goToStatistics" 
+          class="statistics-button"
+        >
+          <ion-icon :icon="barChartOutline" slot="start"></ion-icon>
+          Переглянути статистику
+        </ion-button>
+      </ion-item>
+      
+      <ion-item lines="none">
         <FileUploader @show-toast="showToastMessage" />
       </ion-item>
       <ion-item lines="none">
@@ -25,6 +37,8 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
+import { useIonRouter } from '@ionic/vue';
+import { barChartOutline } from 'ionicons/icons';
 import FileUploader from '@/components/Settings/FileUploader/FileUploader.vue';
 import ViewDataButton from '@/components/ViewDataButton/ViewDataButton.vue';
 import ClearDataButton from '@/components/Settings/ClearDataButton/ClearDataButton.vue';
@@ -38,6 +52,7 @@ export default defineComponent({
     NicknameSettings
   },
   setup() {
+    const ionRouter = useIonRouter();
     const showToast = ref(false);
     const toastMessage = ref('');
     const toastColor = ref('primary');
@@ -47,12 +62,18 @@ export default defineComponent({
       toastColor.value = isError ? 'danger' : 'primary';
       showToast.value = true;
     };
+    
+    const goToStatistics = () => {
+      ionRouter.push('/tabs/statistics');
+    };
 
     return {
       showToast,
       toastMessage,
       toastColor,
-      showToastMessage
+      showToastMessage,
+      goToStatistics,
+      barChartOutline
     };
   }
 });
