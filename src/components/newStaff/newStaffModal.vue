@@ -189,8 +189,8 @@ export default defineComponent({
 
       if (formatted.length === 10) {
         const birthdateValidation = validateBirthdate(formatted);
-        if (birthdateValidation !== true && !birthdateValidation.valid) {
-          birthdateError.value = birthdateValidation.message;
+        if (birthdateValidation !== true && typeof birthdateValidation === 'object') {
+          birthdateError.value = birthdateValidation.message || '';
         } else {
           birthdateError.value = '';
         }
@@ -206,8 +206,8 @@ export default defineComponent({
         
       const birthdateValidation = validateBirthdate(form.value.birthday);
       
-      if (birthdateValidation !== true && !birthdateValidation.valid) {
-        birthdateError.value = birthdateValidation.message;
+      if (birthdateValidation !== true && typeof birthdateValidation === 'object') {
+        birthdateError.value = birthdateValidation.message || '';
         setTimeout(() => {
           document.querySelector('.error-message')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 100);

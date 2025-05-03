@@ -118,7 +118,6 @@ import { IonDatetime, IonPopover, IonContent, IonIcon, IonButton } from '@ionic/
 import { closeCircle } from 'ionicons/icons';
 
 export default defineComponent({
-  name: 'TourniquetPicker',
   components: {
     IonDatetime,
     IonPopover,

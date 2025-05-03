@@ -35,7 +35,6 @@ import { defineComponent, ref, watch } from 'vue';
 import { searchInLocations } from '@/compasables/useDatabase.js';
 
 export default defineComponent({
-  name: 'LocationPicker',
   props: {
     modelValue: {
       type: String,

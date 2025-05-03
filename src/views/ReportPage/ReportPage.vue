@@ -136,7 +136,7 @@
                   color="success"
                   shape="round"
                   style="width: 100%"
-                  @click="sendReport"
+                  @click="openTransferModal"
               >
                 <ion-icon :icon="send"></ion-icon>
               </ion-button>
@@ -171,6 +171,13 @@
         ]"
         @didDismiss="handleAlertDismiss"
     ></ion-alert>
+    
+    <transfer-modal 
+      :is-open="isTransferModalOpen" 
+      mode="send" 
+      :report-data="report"
+      @close="closeTransferModal" 
+    />
   </ion-page>
 </template>
 
@@ -180,10 +187,12 @@ import { useRoute } from 'vue-router';
 import {getByIdFromReports, deleteFromReports} from '@/compasables/useDatabase.js';
 import {useIonRouter, IonAlert} from "@ionic/vue";
 import { pencil, copy, trash, send } from 'ionicons/icons';
+import TransferModal from "@/components/TransferData/TransferModal/TransferModal.vue";
 
 export default defineComponent({
   components: {
-    IonAlert 
+    IonAlert,
+    TransferModal
   },
   setup() {
     const report = ref<any>(null);
@@ -191,6 +200,7 @@ export default defineComponent({
     const isAlertOpen = ref(false);
     const toastMessage = ref('');
     const reportToDelete = ref<number | null>(null);
+    const isTransferModalOpen = ref(false);
     
     const fetchData = async (id: number) => {
       report.value = await getByIdFromReports(id);
@@ -299,9 +309,12 @@ export default defineComponent({
       isAlertOpen.value = false;
     };
 
-    const sendReport = () => {
-      toastMessage.value = 'Функція відправки буде доступна незабаром';
-      setOpenAlert(true);
+    const openTransferModal = () => {
+      isTransferModalOpen.value = true;
+    };
+
+    const closeTransferModal = () => {
+      isTransferModalOpen.value = false;
     };
 
     return {
@@ -312,12 +325,14 @@ export default defineComponent({
       copyReport,
       toReportEdit,
       deleteReport,
-      sendReport,
       setOpenAlert,
       handleAlertDismiss,
       formatTQ,
       formatTimePass,
       formatDate,
+      isTransferModalOpen,
+      openTransferModal,
+      closeTransferModal,
       pencil,
       copy,
       trash,

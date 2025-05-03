@@ -35,7 +35,6 @@ import { defineComponent, ref, watch } from 'vue';
 import { searchInLocations, searchInSituations } from '@/compasables/useDatabase.js';
 
 export default defineComponent({
-  name: 'AutocompletePicker',
   props: {
     modelValue: {
       type: String,

@@ -25,7 +25,6 @@ import { trashOutline } from 'ionicons/icons';
 import db from '@/compasables/database';
 
 export default defineComponent({
-  name: 'ClearDataButton',
   components: {
     IonButton,
     IonIcon,

@@ -25,7 +25,6 @@ import { useRoute } from 'vue-router';
 import db from '@/compasables/database';
 
 export default defineComponent({
-  name: 'EvacuatedByPicker',
   props: {
     modelValue: {
       type: String,

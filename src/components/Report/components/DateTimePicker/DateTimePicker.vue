@@ -46,7 +46,6 @@ import { IonDatetime, IonModal, IonContent, IonInput, IonIcon } from '@ionic/vue
 import { closeCircle } from 'ionicons/icons';
 
 export default defineComponent({
-  name: 'DateTimePicker',
   components: {
     IonDatetime,
     IonModal,
