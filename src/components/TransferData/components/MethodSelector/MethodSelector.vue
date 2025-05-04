@@ -11,11 +11,11 @@
         </ion-label>
       </ion-item>
       
-      <ion-item button detail disabled>
+      <ion-item button @click="$emit('select-method', 'bluetooth')" detail>
         <ion-icon :icon="bluetoothOutline" slot="start" color="primary"></ion-icon>
         <ion-label>
           <h2>Bluetooth</h2>
-          <p>В розробці</p>
+          <p>{{ isReceiveMode ? 'Отримати через Bluetooth' : 'Відправити через Bluetooth' }}</p>
         </ion-label>
       </ion-item>
       

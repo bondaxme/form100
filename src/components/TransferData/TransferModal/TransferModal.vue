@@ -18,6 +18,7 @@
         @select-method="selectMethod"
       />
       
+      <!-- QR Code components -->
       <qr-code-generator 
         v-if="selectedMethod === 'qr' && mode === 'send'" 
         :data="reportData"
@@ -27,6 +28,22 @@
       
       <qr-code-scanner 
         v-if="selectedMethod === 'qr' && mode === 'receive'" 
+        @back="backToMethodSelection"
+        @data-received="handleDataReceived"
+        @error="handleError"
+      />
+      
+      <!-- Bluetooth components -->
+      <bluetooth-sender 
+        v-if="selectedMethod === 'bluetooth' && mode === 'send'" 
+        :reportData="reportData"
+        @back="backToMethodSelection"
+        @success="handleSuccess"
+        @error="handleError"
+      />
+      
+      <bluetooth-receiver 
+        v-if="selectedMethod === 'bluetooth' && mode === 'receive'" 
         @back="backToMethodSelection"
         @data-received="handleDataReceived"
         @error="handleError"
@@ -50,6 +67,8 @@ import { IonModal } from '@ionic/vue';
 import MethodSelector from '../components/MethodSelector/MethodSelector.vue';
 import QrCodeGenerator from '../components/QrCodeGenerator/QrCodeGenerator.vue';
 import QrCodeScanner from '../components/QrCodeScanner/QrCodeScanner.vue';
+import BluetoothSender from '../components/BluetoothSender/BluetoothSender.vue';
+import BluetoothReceiver from '../components/BluetoothReceiver/BluetoothReceiver.vue';
 import StatusMessage from '../components/StatusMessage/StatusMessage.vue';
 import { useQrTransfer } from '../composables/useQrTransfer';
 
@@ -63,6 +82,8 @@ export default defineComponent({
     MethodSelector,
     QrCodeGenerator,
     QrCodeScanner,
+    BluetoothSender,
+    BluetoothReceiver,
     StatusMessage
   },
   props: {
@@ -106,6 +127,11 @@ export default defineComponent({
       errorMessage.value = error;
     };
     
+    const handleSuccess = (message: string): void => {
+      transferSuccess.value = true;
+      successMessage.value = message;
+    };
+    
     const resetErrorState = (): void => {
       errorMessage.value = '';
       resetError();
@@ -137,6 +163,7 @@ export default defineComponent({
       backToMethodSelection,
       handleDataReceived,
       handleError,
+      handleSuccess,
       resetError: resetErrorState,
       closeModal,
       closeOutline
