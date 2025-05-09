@@ -61,6 +61,7 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { eyeOutline, eyeOffOutline } from 'ionicons/icons';
 import { useIonRouter } from '@ionic/vue';
 import { savePassword, getPassword, createSession } from '@/compasables/useDatabase';
+import { useBluetoothTransfer } from '@/components/TransferData/composables/useBluetoothTransfer';
 
 export default defineComponent({
   setup() {
@@ -74,7 +75,11 @@ export default defineComponent({
     const toastColor = ref('danger');
     const ionRouter = useIonRouter();
 
+    const { startForegroundService, stopForegroundService } = useBluetoothTransfer();
+
     onMounted(async () => {
+      startForegroundService();
+      stopForegroundService();
       const hashedPassword = await getPassword();
       isFirstTime.value = !hashedPassword;
     });

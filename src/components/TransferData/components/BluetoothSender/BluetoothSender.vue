@@ -22,6 +22,22 @@
           <p>{{ transferProgress }}%</p>
         </div>
         
+        <div v-else-if="transferSuccess" class="success-status">
+          <ion-icon :icon="checkmarkCircleOutline" size="large" color="success"></ion-icon>
+          <p class="success-message">{{ successMessage }}</p>
+          <ion-button expand="block" @click="completeTransfer" color="success">
+            Готово
+          </ion-button>
+        </div>
+        
+        <div v-else-if="errorOccurred" class="error-status">
+          <ion-icon :icon="alertCircleOutline" size="large" color="danger"></ion-icon>
+          <p class="error-message">{{ errorMessage }}</p>
+          <ion-button expand="block" @click="resetTransfer" color="medium">
+            Спробувати знову
+          </ion-button>
+        </div>
+        
         <div v-else class="ready-status">
           <p>Пристрій готовий до передачі даних</p>
           <ion-button expand="block" @click="sendReport" color="primary">
@@ -31,10 +47,10 @@
       </div>
       
       <div class="sender-footer">
-        <ion-button expand="block" @click="disconnectDevice" color="medium">
+        <ion-button expand="block" @click="disconnectDevice" color="medium" v-if="!transferSuccess">
           Відключитись
         </ion-button>
-        <ion-button expand="block" @click="goBack" color="medium">
+        <ion-button expand="block" @click="goBack" color="medium" v-if="!transferSuccess">
           Назад
         </ion-button>
       </div>
@@ -43,14 +59,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from 'vue';
+import { defineComponent, onUnmounted, ref, watch } from 'vue';
 import { useBluetoothTransfer } from '../../composables/useBluetoothTransfer';
 import BluetoothScanner from '../BluetoothScanner/BluetoothScanner.vue';
+import { IonProgressBar, IonIcon, useIonRouter } from '@ionic/vue';
+import { checkmarkCircleOutline, alertCircleOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'BluetoothSender',
   components: {
-    BluetoothScanner
+    BluetoothScanner,
+    IonProgressBar,
+    IonIcon
   },
   props: {
     reportData: {
@@ -58,25 +78,36 @@ export default defineComponent({
       required: true
     }
   },
-  emits: ['back', 'error', 'success'],
+  emits: ['back', 'error', 'success', 'complete'],
   
   setup(props, { emit }) {
+    const router = useIonRouter();
+    const errorOccurred = ref(false);
+    
     const { 
       selectedDevice,
       isSending,
       transferProgress,
       errorMessage,
       successMessage,
+      transferSuccess,
       sendData,
       disconnectFromDevice,
       cleanup
     } = useBluetoothTransfer();
     
+    // Watch for error messages
+    watch(errorMessage, (newValue) => {
+      if (newValue) {
+        errorOccurred.value = true;
+      }
+    });
+    
     const onDeviceConnected = () => {
-      // Device was connected in the scanner component
     };
     
     const sendReport = async () => {
+      errorOccurred.value = false;
       const result = await sendData(props.reportData);
       if (result) {
         emit('success', successMessage.value);
@@ -85,11 +116,22 @@ export default defineComponent({
       }
     };
     
+    const resetTransfer = () => {
+      errorOccurred.value = false;
+      errorMessage.value = '';
+    };
+    
+    const completeTransfer = async () => {
+      await cleanup();
+      emit('complete');
+    };
+    
     const disconnectDevice = async () => {
       await disconnectFromDevice();
     };
     
     const handleError = (error: string) => {
+      errorOccurred.value = true;
       emit('error', error);
     };
     
@@ -110,64 +152,20 @@ export default defineComponent({
       disconnectDevice,
       handleError,
       onDeviceConnected,
-      goBack
+      goBack,
+      checkmarkCircleOutline,
+      alertCircleOutline,
+      successMessage,
+      errorMessage,
+      transferSuccess,
+      errorOccurred,
+      resetTransfer,
+      completeTransfer
     };
   }
 });
 </script>
 
 <style scoped>
-.bluetooth-sender {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.sender-container {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 16px;
-}
-
-.sender-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.transfer-status {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 20px 0;
-}
-
-.sending-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.sending-status ion-progress-bar {
-  width: 100%;
-  margin: 10px 0;
-}
-
-.ready-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-}
-
-.sender-footer {
-  margin-top: auto;
-}
-
-.sender-footer ion-button {
-  margin-bottom: 10px;
-}
+ @import "./BluetoothSender.scss";
 </style>

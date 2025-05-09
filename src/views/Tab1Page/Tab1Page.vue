@@ -120,7 +120,6 @@ export default defineComponent({
         await postToReports(receivedReport);
         getData();
       } catch (error) {
-        console.error('Error adding received report:', error);
         const toast = await toastController.create({
           message: 'Помилка при додаванні звіту',
           duration: 2000,

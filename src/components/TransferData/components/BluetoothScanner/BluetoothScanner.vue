@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, Ref, onMounted, onUnmounted } from 'vue';
+import { defineComponent, ref, Ref, onMounted } from 'vue';
 import { useBluetoothTransfer } from '../../composables/useBluetoothTransfer';
 
 export default defineComponent({
@@ -58,8 +58,7 @@ export default defineComponent({
       initialize,
       startScan,
       stopScan,
-      connectToDevice,
-      cleanup
+      connectToDevice
     } = useBluetoothTransfer();
     
     const scanning: Ref<boolean> = ref(false);
@@ -73,9 +72,9 @@ export default defineComponent({
       }
     });
     
-    onUnmounted(async () => {
-      await cleanup();
-    });
+    // onUnmounted(async () => {
+    //   await cleanup();
+    // });
     
     const toggleScan = async () => {
       if (scanning.value) {
@@ -120,34 +119,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.bluetooth-scanner {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 16px;
-}
-
-.scanner-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.devices-list {
-  margin: 20px 0;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.scanning-spinner {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-.connection-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 20px 0;
-}
+ @import "./BluetoothScanner.scss";
 </style>

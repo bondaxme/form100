@@ -1,0 +1,78 @@
+.bluetooth-receiver {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.receiver-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.advertising-controls {
+  margin: 20px 0;
+}
+
+.receiver-status {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+}
+
+.instruction {
+  margin-top: 16px;
+  font-size: 14px;
+  font-style: italic;
+  text-align: center;
+}
+
+.receiver-footer {
+  margin-top: auto;
+  float: bottom;
+}
+
+.success-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.success-status .success-message {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: var(--ion-color-success);
+  text-align: center;
+}
+
+.error-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.error-status .error-message {
+  margin-top: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  color: var(--ion-color-danger);
+  text-align: center;
+}

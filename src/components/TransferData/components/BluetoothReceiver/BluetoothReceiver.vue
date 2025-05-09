@@ -2,155 +2,167 @@
   <div class="bluetooth-receiver">
     <div class="receiver-header">
       <h2>Отримання звіту</h2>
-      <p v-if="isReceiving">Очікування підключення...</p>
-      <p v-else>Натисніть кнопку, щоб почати отримання</p>
+      <p v-if="isReceiving && !transferSuccess">Очікування підключення...</p>
+      <p v-else-if="!transferSuccess">Натисніть кнопку, щоб почати отримання</p>
     </div>
 
-    <div class="advertising-controls">
-      <ion-button expand="block" @click="toggleAdvertising">
-        {{ isReceiving ? 'Зупинити прийом' : 'Почати прийом' }}
+    <div v-if="transferSuccess" class="success-status">
+      <ion-icon :icon="checkmarkCircleOutline" size="large" color="success"></ion-icon>
+      <p class="success-message">{{ successMessage }}</p>
+      <ion-button expand="block" @click="completeTransfer" color="success">
+        Готово
       </ion-button>
     </div>
-
-    <div class="receiver-status" v-if="isReceiving">
-      <div class="status-info">
-        <ion-spinner name="circles"></ion-spinner>
-        <p>Пристрій видимий для передачі</p>
-        <p class="instruction">Відкрийте відправку на іншому пристрої та підключіться до цього</p>
+    
+    <div v-else-if="errorOccurred" class="error-status">
+      <ion-icon :icon="alertCircleOutline" size="large" color="danger"></ion-icon>
+      <p class="error-message">{{ errorMessage }}</p>
+      <ion-button expand="block" @click="resetError" color="medium">
+        Спробувати знову
+      </ion-button>
+    </div>
+    
+    <div v-else>
+      <div class="advertising-controls">
+        <ion-button expand="block" @click="toggleAdvertising" :disabled="transferSuccess">
+          {{ isReceiving ? 'Зупинити прийом' : 'Почати прийом' }}
+        </ion-button>
       </div>
-    </div>
 
-    <div class="receiver-footer">
-      <ion-button expand="block" @click="goBack" color="medium">
-        Назад
-      </ion-button>
+      <div class="receiver-status" v-if="isReceiving && !transferSuccess">
+        <div class="status-info">
+          <ion-spinner name="circles"></ion-spinner>
+          <p>Пристрій видимий для передачі</p>
+          <p class="instruction">Відкрийте відправку на іншому пристрої та підключіться до цього</p>
+        </div>
+      </div>
+
+      <div class="receiver-footer">
+        <ion-button expand="block" @click="goBack" color="medium" :disabled="transferSuccess">
+          Назад
+        </ion-button>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted } from 'vue';
-import { BluetoothLowEnergy } from '@capawesome-team/capacitor-bluetooth-low-energy';
+import { defineComponent, ref, watch, onUnmounted } from 'vue';
 import { useBluetoothTransfer } from '../../composables/useBluetoothTransfer';
-
-// Same constants as in useBluetoothTransfer.ts
-const REPORT_SERVICE_UUID = '00001800-0000-1000-8000-00805f9b34fb';
-const REPORT_CHARACTERISTIC_UUID = '00002a00-0000-1000-8000-00805f9b34fb';
+import { IonSpinner, IonIcon, useIonRouter } from '@ionic/vue';
+import { checkmarkCircleOutline, alertCircleOutline } from 'ionicons/icons';
 
 export default defineComponent({
   name: 'BluetoothReceiver',
-  emits: ['back', 'error', 'data-received'],
+  components: {
+    IonSpinner,
+    IonIcon
+  },
+  emits: ['back', 'error', 'data-received', 'complete'],
 
-  setup(_, { emit }) {
+  setup(props, { emit }) {
+    const router = useIonRouter();
+    const errorOccurred = ref(false);
+    
     const { 
       isReceiving,
       errorMessage,
+      successMessage,
+      transferSuccess,
       initialize,
       startAdvertising,
       stopAdvertising,
       setupDataReceiver,
-      cleanup
+      cleanup,
+      resetError: resetBleError
     } = useBluetoothTransfer();
-
-    // Set up listeners for data reception when the component mounts
-    onMounted(async () => {
-      const initialized = await initialize();
-      if (!initialized) {
-        emit('error', errorMessage.value);
-        return;
+    
+    watch(errorMessage, (newValue) => {
+      if (newValue) {
+        errorOccurred.value = true;
       }
-
-      // Setup data receiver
-      await setupDataReceiver();
-      
-      // Add event listener to handle the received data
-      BluetoothLowEnergy.addListener('characteristicWriteRequest', async (event) => {
-        if (event.characteristicId === REPORT_CHARACTERISTIC_UUID) {
-          try {
-            const decoder = new TextDecoder();
-            const dataString = decoder.decode(new Uint8Array(event.value));
-            const data = JSON.parse(dataString);
-            emit('data-received', data);
-          } catch (err) {
-            console.error('Error processing received data:', err);
-            emit('error', 'Помилка при обробці отриманих даних');
-          }
+    });
+    
+    watch(transferSuccess, async (newValue) => {
+      if (newValue && isReceiving.value) {
+        console.log('Звіт успішно отримано, зупиняємо прийом');
+        await stopAdvertising();
+      }
+    });
+    
+    const startReceiving = async () => {
+      try {
+        errorOccurred.value = false;
+        transferSuccess.value = false;
+        
+        const initialized = await initialize();
+        if (!initialized) {
+          return;
         }
-      });
-    });
-
-    onUnmounted(async () => {
-      await cleanup();
-    });
+        
+        await setupDataReceiver((receivedData) => {
+          transferSuccess.value = true;
+          successMessage.value = 'Звіт успішно отримано!';
+          
+          emit('data-received', receivedData);
+        });
+        
+        const startedAdvertising = await startAdvertising();
+        if (!startedAdvertising) {
+          return;
+        }
+      } catch (err: any) {
+        errorMessage.value = `Помилка при підготовці до отримання даних: ${err.message || 'Невідома помилка'}`;
+        errorOccurred.value = true;
+        emit('error', errorMessage.value);
+      }
+    };
 
     const toggleAdvertising = async () => {
       if (isReceiving.value) {
         await stopAdvertising();
       } else {
-        const result = await startAdvertising();
-        if (!result) {
-          emit('error', errorMessage.value);
-        }
+        await startReceiving();
       }
+    };
+    
+    const resetError = () => {
+      errorOccurred.value = false;
+      errorMessage.value = '';
+      resetBleError();
+    };
+    
+    const completeTransfer = async () => {
+      await cleanup();
+      emit('complete');
     };
 
     const goBack = async () => {
       await stopAdvertising();
       emit('back');
     };
+    
+    onUnmounted(async () => {
+      await cleanup();
+    });
 
     return {
       isReceiving,
+      errorMessage,
+      successMessage,
+      transferSuccess,
+      errorOccurred,
       toggleAdvertising,
-      goBack
+      resetError,
+      completeTransfer,
+      goBack,
+      checkmarkCircleOutline,
+      alertCircleOutline
     };
   }
 });
 </script>
 
 <style scoped>
-.bluetooth-receiver {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 16px;
-}
-
-.receiver-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.advertising-controls {
-  margin: 20px 0;
-}
-
-.receiver-status {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.status-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f8f8f8;
-}
-
-.instruction {
-  margin-top: 16px;
-  font-size: 14px;
-  font-style: italic;
-  text-align: center;
-}
-
-.receiver-footer {
-  margin-top: auto;
-}
+ @import "./BluetoothReceiver.scss";
 </style>

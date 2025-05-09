@@ -1,0 +1,30 @@
+.bluetooth-scanner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.scanner-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.devices-list {
+  margin: 20px 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scanning-spinner {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.connection-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 0;
+}

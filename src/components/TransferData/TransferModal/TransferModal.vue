@@ -40,6 +40,7 @@
         @back="backToMethodSelection"
         @success="handleSuccess"
         @error="handleError"
+        @complete="closeModal"
       />
       
       <bluetooth-receiver 
@@ -47,6 +48,7 @@
         @back="backToMethodSelection"
         @data-received="handleDataReceived"
         @error="handleError"
+        @complete="closeModal"
       />
       
       <status-message 

@@ -18,14 +18,6 @@
           <p>{{ isReceiveMode ? 'Отримати через Bluetooth' : 'Відправити через Bluetooth' }}</p>
         </ion-label>
       </ion-item>
-      
-      <ion-item button detail disabled>
-        <ion-icon :icon="wifiOutline" slot="start" color="primary"></ion-icon>
-        <ion-label>
-          <h2>Wi-Fi Direct</h2>
-          <p>В розробці</p>
-        </ion-label>
-      </ion-item>
     </ion-list>
   </div>
 </template>

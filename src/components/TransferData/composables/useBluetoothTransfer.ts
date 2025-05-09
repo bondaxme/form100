@@ -3,46 +3,55 @@ import {
   BluetoothLowEnergy
 } from '@capawesome-team/capacitor-bluetooth-low-energy';
 
-// Define a service and characteristic for our application
-const REPORT_SERVICE_UUID = '00001800-0000-1000-8000-00805f9b34fb';
-const REPORT_CHARACTERISTIC_UUID = '00002a00-0000-1000-8000-00805f9b34fb';
+const REPORT_SERVICE_UUID = '0000ffe0-0000-1000-8000-00805f9b34fb';
+const REPORT_CHARACTERISTIC_UUID = '0000ffe1-0000-1000-8000-00805f9b34fb';
+
+const isSending: Ref<boolean> = ref(false);
+const isReceiving: Ref<boolean> = ref(false);
+const errorMessage: Ref<string> = ref('');
+const transferSuccess: Ref<boolean> = ref(false);
+const successMessage: Ref<string> = ref('');
+const devicesList: Ref<any[]> = ref([]);
+const selectedDevice: Ref<any | null> = ref(null);
+const transferProgress: Ref<number> = ref(0);
 
 export function useBluetoothTransfer() {
-  const isSending: Ref<boolean> = ref(false);
-  const isReceiving: Ref<boolean> = ref(false);
-  const errorMessage: Ref<string> = ref('');
-  const transferSuccess: Ref<boolean> = ref(false);
-  const successMessage: Ref<string> = ref('');
-  const devicesList: Ref<any[]> = ref([]);
-  const selectedDevice: Ref<any | null> = ref(null);
-  const transferProgress: Ref<number> = ref(0);
-
-  // Initialize BLE functionality
   const initialize = async (): Promise<boolean> => {
     try {
       const permissionsResult = await BluetoothLowEnergy.requestPermissions();
       
-      if (permissionsResult.location !== 'granted' || 
-          permissionsResult.bluetooth !== 'granted') {
-        errorMessage.value = 'Дозволи на Bluetooth не надано';
-        return false;
-      }
+      // if (permissionsResult.location !== 'granted' || 
+      //     permissionsResult.bluetooth !== 'granted') {
+      //   errorMessage.value = 'Дозволи на Bluetooth не надано';
+      //   return false;
+      // }
       
       const isEnabledResult = await BluetoothLowEnergy.isEnabled();
       if (!isEnabledResult.enabled) {
-        errorMessage.value = 'Bluetooth не увімкнено на пристрої';
+        await BluetoothLowEnergy.openBluetoothSettings();
         return false;
       }
       
       return true;
     } catch (err: any) {
-      console.error('Error initializing BLE:', err);
       errorMessage.value = `Помилка ініціалізації Bluetooth: ${err.message || 'Невідома помилка'}`;
       return false;
     }
   };
 
-  // Start advertising this device (acting as a peripheral)
+  const startForegroundService = async () => {
+    await BluetoothLowEnergy.startForegroundService({
+      body: 'Bluetooth передача активна',
+      id: 1,
+      smallIcon: 'smallIcon',
+      title: 'Bluetooth передача',
+    });
+  };
+
+  const stopForegroundService = async () => {
+    await BluetoothLowEnergy.stopForegroundService();
+  }
+
   const startAdvertising = async (): Promise<boolean> => {
     try {
       await BluetoothLowEnergy.startAdvertising({
@@ -63,7 +72,7 @@ export function useBluetoothTransfer() {
                   notify: true,
                   indicate: true,
                   broadcast: false,
-                  writeWithoutResponse: false,
+                  writeWithoutResponse: true,
                   authenticatedSignedWrites: false,
                   extendedProperties: false,
                   notifyEncryptionRequired: false,
@@ -78,13 +87,11 @@ export function useBluetoothTransfer() {
       isReceiving.value = true;
       return true;
     } catch (err: any) {
-      console.error('Error starting advertising:', err);
       errorMessage.value = `Помилка при запуску сервера: ${err.message || 'Невідома помилка'}`;
       return false;
     }
   };
 
-  // Stop advertising
   const stopAdvertising = async (): Promise<void> => {
     try {
       await BluetoothLowEnergy.stopAdvertising();
@@ -94,43 +101,32 @@ export function useBluetoothTransfer() {
     }
   };
 
-  // Start scanning for devices
   const startScan = async (): Promise<void> => {
     devicesList.value = [];
     
     try {
-      // Add event listener for discovered devices
       await BluetoothLowEnergy.addListener('deviceScanned', (event) => {
-        // Transform the event to have a consistent deviceId property
-        const deviceInfo = {
-          ...event,
-          deviceId: event.id // Add deviceId for consistency
-        };
-        
-        // Only add devices that are not already in the list
         if (!devicesList.value.some(d => d.deviceId === event.id)) {
-          devicesList.value.push(deviceInfo);
+          devicesList.value.push({
+            deviceId: event.id,
+            name: event.name || 'Невідомий пристрій'});
         }
       });
       
       await BluetoothLowEnergy.startScan();
     } catch (err: any) {
-      console.error('Error starting scan:', err);
       errorMessage.value = `Помилка при скануванні пристроїв: ${err.message || 'Невідома помилка'}`;
     }
   };
 
-  // Stop scanning for devices
   const stopScan = async (): Promise<void> => {
     try {
       await BluetoothLowEnergy.stopScan();
-      BluetoothLowEnergy.removeAllListeners();
     } catch (err: any) {
       console.error('Error stopping scan:', err);
     }
   };
 
-  // Connect to a device
   const connectToDevice = async (deviceId: string): Promise<boolean> => {
     if (!deviceId) {
       errorMessage.value = 'Помилка підключення до пристрою: ID пристрою не вказано';
@@ -138,26 +134,34 @@ export function useBluetoothTransfer() {
     }
     
     try {
-      console.log(`Connecting to device with ID: ${deviceId}`);
       await BluetoothLowEnergy.connect({ deviceId });
+      console.log(`Connected to device with ID: ${deviceId}`);
       await BluetoothLowEnergy.discoverServices({ deviceId });
       
-      // Find the device in our list
+      console.log(`Devices list:`, devicesList.value);
       selectedDevice.value = devicesList.value.find(d => d.deviceId === deviceId);
+      
       if (!selectedDevice.value) {
-        // If device not found in our list, create a minimal representation
         selectedDevice.value = { deviceId, name: 'Невідомий пристрій' };
       }
       
+      console.log(`Selected device:`, selectedDevice.value);
+      
+      await BluetoothLowEnergy.addListener('deviceDisconnected', async (event) => {
+        if (event.deviceId === deviceId && selectedDevice.value && !transferSuccess.value) {
+          console.log(`Device with ID ${deviceId} disconnected unexpectedly`);
+          errorMessage.value = 'Пристрій відключено несподівано';
+          selectedDevice.value = null;
+        }
+      });
+      
       return true;
     } catch (err: any) {
-      console.error('Error connecting to device:', err);
       errorMessage.value = `Помилка підключення до пристрою: ${err.message || 'Невідома помилка'}`;
       return false;
     }
   };
 
-  // Disconnect from a device
   const disconnectFromDevice = async (): Promise<void> => {
     if (!selectedDevice.value || !selectedDevice.value.deviceId) return;
     
@@ -169,7 +173,6 @@ export function useBluetoothTransfer() {
     }
   };
 
-  // Send data to a device
   const sendData = async (data: any): Promise<boolean> => {
     if (!selectedDevice.value || !selectedDevice.value.deviceId) {
       errorMessage.value = 'Пристрій не вибрано';
@@ -178,88 +181,128 @@ export function useBluetoothTransfer() {
     
     try {
       isSending.value = true;
+      transferProgress.value = 0;
       
-      // Convert the data to a string and then to a byte array
-      const dataString = JSON.stringify(data);
+      const dataString = JSON.stringify(data) + '\0';
+      console.log('Data to send:', dataString);
+      
       const encoder = new TextEncoder();
       const dataBytes = Array.from(encoder.encode(dataString));
+      console.log('Data bytes:', dataBytes);
       
-      // Due to BLE packet size limitations, we may need to chunk the data
-      const chunkSize = 512; // This can be adjusted based on MTU
+      const chunkSize = 20;
       const chunks = [];
       
       for (let i = 0; i < dataBytes.length; i += chunkSize) {
         chunks.push(dataBytes.slice(i, i + chunkSize));
       }
+      console.log('Data chunks:', chunks);
       
-      // Send each chunk
       for (let i = 0; i < chunks.length; i++) {
+        console.log(`Sending chunk ${i + 1}/${chunks.length}`);
+        
+        console.log(selectedDevice.value.deviceId, REPORT_SERVICE_UUID, REPORT_CHARACTERISTIC_UUID, chunks[i]);
+        
         await BluetoothLowEnergy.writeCharacteristic({
           deviceId: selectedDevice.value.deviceId,
           serviceId: REPORT_SERVICE_UUID,
+          timeout: 10000,
+          type: 'withoutResponse',
           characteristicId: REPORT_CHARACTERISTIC_UUID,
           value: chunks[i],
         });
+        console.log(`Sent chunk ${i + 1}/${chunks.length}`);
         
-        // Update progress
         transferProgress.value = Math.round(((i + 1) / chunks.length) * 100);
+        
+        if (i < chunks.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
       }
+
+      console.log('All chunks sent successfully!');
       
       transferSuccess.value = true;
       successMessage.value = 'Звіт успішно відправлено!';
       isSending.value = false;
       return true;
     } catch (err: any) {
-      console.error('Error sending data:', err);
       errorMessage.value = `Помилка при відправці даних: ${err.message || 'Невідома помилка'}`;
       isSending.value = false;
       return false;
     }
   };
 
-  // Set up event listeners for receiving data
-  const setupDataReceiver = async (): Promise<void> => {
-    // Listen for characteristic write requests (when someone writes to us)
+  const setupDataReceiver = async (onDataReceived?: (data: any) => void): Promise<void> => {
+    console.log('Setting up data receiver...');
+    let receivedChunks: Uint8Array[] = [];
+    const data: any = { value: null };
+
     BluetoothLowEnergy.addListener('characteristicWriteRequest', async (event) => {
       if (event.characteristicId === REPORT_CHARACTERISTIC_UUID) {
+        console.log('Received data:', event.value);
         try {
-          // Convert the byte array to a string
-          const decoder = new TextDecoder();
-          const dataString = decoder.decode(new Uint8Array(event.value));
+          receivedChunks.push(new Uint8Array(event.value));
+          console.log('Received chunks:', receivedChunks);
           
-          // Try to parse the data
-          const data = JSON.parse(dataString);
+          const combined = new Uint8Array(receivedChunks.flatMap(a => [...a]));
+          const endIndex = combined.findIndex(v => v === 0);
           
-          transferSuccess.value = true;
-          successMessage.value = 'Звіт успішно отримано!';
-          
-          // Return the received data
-          return data;
+          console.log('Combined data:', combined);
+          if (endIndex !== -1) {
+            console.log('End index:', endIndex);
+            const completeData = combined.slice(0, endIndex);
+            const decoder = new TextDecoder('utf-8');
+            const dataString = decoder.decode(completeData);
+            console.log('Complete data string:', dataString);
+            
+            try {
+              data.value = JSON.parse(dataString);
+              receivedChunks = [];
+              
+              transferSuccess.value = true;
+              successMessage.value = 'Звіт успішно отримано!';
+              
+              await stopAdvertising();
+              
+              if (onDataReceived && data.value) {
+                onDataReceived(data.value);
+              }
+            } catch (parseErr) {
+              console.error('Error parsing received data:', parseErr);
+              errorMessage.value = 'Отримані пошкоджені дані. Спробуйте знову.';
+            }
+          }
         } catch (err: any) {
-          console.error('Error processing received data:', err);
           errorMessage.value = 'Помилка при обробці отриманих даних';
         }
       }
     });
   };
 
-  // Reset error messages
   const resetError = (): void => {
     errorMessage.value = '';
   };
 
-  // Clean up listeners and connections when done
   const cleanup = async (): Promise<void> => {
-    await stopScan();
-    await disconnectFromDevice();
-    await stopAdvertising();
-    BluetoothLowEnergy.removeAllListeners();
-    
-    isSending.value = false;
-    isReceiving.value = false;
-    transferProgress.value = 0;
-    devicesList.value = [];
-    selectedDevice.value = null;
+    try {
+      console.log('Cleaning up Bluetooth resources...');
+      await stopScan();
+      await disconnectFromDevice();
+      await stopAdvertising();
+      await BluetoothLowEnergy.removeAllListeners();
+      await stopForegroundService();
+      
+      isSending.value = false;
+      isReceiving.value = false;
+      transferProgress.value = 0;
+      devicesList.value = [];
+      selectedDevice.value = null;
+      
+      console.log('Bluetooth resources cleaned up successfully');
+    } catch (err) {
+      console.error('Error during cleanup:', err);
+    }
   };
 
   return {
@@ -281,6 +324,8 @@ export function useBluetoothTransfer() {
     sendData,
     setupDataReceiver,
     resetError,
-    cleanup
+    cleanup,
+    startForegroundService,
+    stopForegroundService,
   };
 }
