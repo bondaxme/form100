@@ -472,12 +472,12 @@ export default defineComponent({
           await updateByIdInReports(form.value.id, form.value);
           // alert('Репорт успішно збережено');
           // router.push('/tabs/tab1');
-          window.location.href = '/tabs/report/' + form.value.id;
+          router.push('/tabs/report/' + form.value.id);
         } else {
           await postToReports(form.value);
           // alert('Репорт успішно збережено');
           // router.push('/tabs/tab1');
-          window.location.href = '/tabs/tab1';
+          router.push('/tabs/tab1');
         }
       } catch (e) {
         alert('Помилка збереження репорту');

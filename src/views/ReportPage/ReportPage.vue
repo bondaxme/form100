@@ -188,6 +188,7 @@ import {getByIdFromReports, deleteFromReports} from '@/compasables/useDatabase.j
 import {useIonRouter, IonAlert} from "@ionic/vue";
 import { pencil, copy, trash, send } from 'ionicons/icons';
 import TransferModal from "@/components/TransferData/TransferModal/TransferModal.vue";
+import router from '@/router';
 
 export default defineComponent({
   components: {
@@ -299,7 +300,7 @@ export default defineComponent({
       if (ev.detail.role === 'confirm' && reportToDelete.value) {
         try {
           await deleteFromReports(reportToDelete.value);
-          window.location.href = '/tabs/tab1';
+          router.push('/tabs/tab1');
         } catch (err) {
           toastMessage.value = 'Помилка при видаленні звіту';
           setOpenAlert(true);

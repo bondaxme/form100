@@ -56,7 +56,9 @@ export default defineComponent({
       try {
         await db.reportsTable.clear();
         await db.staffTable.clear();
-        // await db.settingsTable.clear();
+        await db.locationsTable.clear();
+        await db.situationsTable.clear();
+        await db.settingsTable.clear();
         
         emit('show-toast', 'Всі дані додатку успішно очищено', false);
       } catch (error) {
